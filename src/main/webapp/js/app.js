@@ -6,10 +6,10 @@
 
 $(document).ready(function () {
     feedMessage();
-    $('#do-chat').submit(function (evt) {
+    $("#do-chat").submit(function (evt) {
         evt.preventDefault();
         $.ajax({
-            url: '/ChatApp/app/chat',
+            url: "/ChatApp/app/chat",
             method: "POST",
             data: $("#message").val(),
             contentType: "text/plain",
@@ -18,22 +18,39 @@ $(document).ready(function () {
             }
         });
     });
+
+    $("#authTest").click(function (evt) {
+        evt.preventDefault();
+        $.ajax({
+            url: "/ChatApp/app/auth/test",
+            method: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Basic " + btoa("user:user"));
+            },
+            success: function(result){
+                alert(result);
+            },
+            failure: function(result){
+                alert(result);
+            }
+        });
+    });
 });
 
 function onMessageSuccess(message) {
-    $("#response").append('<tr><td class="received">' + message + '</td></tr>');
+    $("#response").append("<tr><td class='received'>" + message + "</td></tr>");
 }
 
 function feedMessage() {
     $.ajax({
-        url: '/ChatApp/app/chat',
+        url: "/ChatApp/app/chat",
         method: "GET",
         dataType: "text",
         success: function (result) {
             onMessageSuccess(result);
             feedMessage();
         },
-        error: function(){
+        error: function () {
             feedMessage();
         }
     });

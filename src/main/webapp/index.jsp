@@ -32,10 +32,21 @@
                 </fieldset>
             </form>
         </div>
-        <form method="POST" action="app/auth">
-            <input type="text" name="username" value="" />
-            <input type="password" name="password" value="" />
-            <input type="submit" value="Send" />
-        </form>
+        <div class="container">
+            <form method="POST" action="app/auth">
+                <input type="text" name="username" value="" />
+                <input type="password" name="password" value="" />
+                <input type="submit" value="Send" />
+            </form>
+        </div>
+        <div class="container">
+            <a href="app/auth">Login</a>
+        </div>
+        <div class="container">
+            <a href="app/auth/test">Secured resource</a>
+        </div>
+        <div class="container">
+            <a id="authTest">Working secured resource</a>
+        </div>
     </body>
 </html>

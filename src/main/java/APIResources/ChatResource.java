@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.chat;
+package APIResources;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -48,6 +50,7 @@ public class ChatResource {
      *
      * @return an instance of java.lang.String
      */
+    @PermitAll
     @GET
     public void hangUp(@Suspended AsyncResponse asyncResp) {
         users.add(asyncResp);
@@ -63,6 +66,7 @@ public class ChatResource {
     public void putText(String content) {
     }
 
+    @PermitAll
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
