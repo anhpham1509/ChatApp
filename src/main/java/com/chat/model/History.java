@@ -5,6 +5,13 @@
  */
 package com.chat.model;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,5 +19,69 @@ import java.util.List;
  * @author beochot
  */
 public class History {
-    private List<HistoryEntry> history;
+
+    private static History instance = null;
+    private List<HistoryEntry> entries;
+
+    private History() {
+
+    }
+
+    public static History getInstance() {
+        if (instance == null) {
+            synchronized (History.class) {
+                if (instance == null) {
+                    instance = new History();
+                    History.getInstance().restore();
+                }
+            }
+
+        }
+        return instance;
+
+    }
+
+    public void addEntry(HistoryEntry e) {
+        entries.add(e);
+    }
+
+    public List<HistoryEntry> getEntries() {
+        return entries;
+    }
+
+  
+    private void restore() {
+        try {
+            FileInputStream in = new FileInputStream("history.ser");
+            ObjectInputStream obin = new ObjectInputStream(in);
+            History.getInstance().entries = (ArrayList<HistoryEntry>) obin.readObject();
+            System.out.println("Load");
+            obin.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not open game.ser");
+        } catch (IOException e) {
+            System.out.println("Error reading file");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error reading object");
+        }
+     if(entries==null)
+        entries = new ArrayList<>();
+    }
+
+    public void save() {
+        try {
+            FileOutputStream out = new FileOutputStream("history.ser");
+            ObjectOutputStream obout = new ObjectOutputStream(out);
+            obout.writeObject(History.getInstance().entries);
+            System.out.println("Save");
+            obout.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not open game.ser");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Error writing into file");
+            e.printStackTrace();
+        }
+
+    }
 }

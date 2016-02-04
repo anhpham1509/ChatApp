@@ -5,6 +5,7 @@
  */
 package com.chat.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author beochot
  */
 @XmlRootElement
-public class Group extends Messageable{
+public class Group extends Messageable implements Serializable{
     private String name;
     private List<User> subscribers;
 

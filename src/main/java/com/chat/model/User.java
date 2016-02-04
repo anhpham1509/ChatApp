@@ -5,6 +5,7 @@
  */
 package com.chat.model;
 
+import java.io.Serializable;
 import javax.ws.rs.container.AsyncResponse;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author beochot
  */
 @XmlRootElement
-public class User extends Messageable{
+public class User extends Messageable implements Serializable{
     private String email;
     private String role;
     private String token;
@@ -36,7 +37,7 @@ public class User extends Messageable{
     public String getRole() {
         return role;
     }
-    @XmlElement
+    @XmlTransient
     public void setRole(String role) {
         this.role = role;
     }
@@ -44,7 +45,7 @@ public class User extends Messageable{
     public String getToken() {
         return token;
     }
-    @XmlElement
+    @XmlTransient
     public void setToken(String token) {
         this.token = token;
     }

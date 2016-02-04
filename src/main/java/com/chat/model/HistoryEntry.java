@@ -5,6 +5,7 @@
  */
 package com.chat.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,22 +16,23 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author beochot
  */
 @XmlRootElement
-public class HistoryEntry {
+public class HistoryEntry implements Serializable{
     private Date time;
     private User from;
+    @XmlTransient
     private Messageable to;
     private String messsage;
     
     public HistoryEntry(){
         
     }
-/*    public HistoryEntry(User from, Messageable to,String message) {
+    public HistoryEntry(User from, Messageable to,String message) {
         this.time = new Date();
         this.from = from;
         this.to = to;
         this.messsage=message;
     }
-*/
+
     public Date getTime() {
         return time;
     }
@@ -39,7 +41,14 @@ public class HistoryEntry {
         this.time = time;
     }
 
-    public User getFrom() {
+    public String getMesssage() {
+        return messsage;
+    }
+    @XmlElement
+    public void setMesssage(String messsage) {
+        this.messsage = messsage;
+    }
+        public User getFrom() {
         return from;
     }
     @XmlElement
@@ -50,18 +59,9 @@ public class HistoryEntry {
     public Messageable getTo() {
         return to;
     }
-    @XmlElement
+    @XmlTransient
     public void setTo(Messageable to) {
         this.to = to;
     }
-
-    public String getMesssage() {
-        return messsage;
-    }
-    @XmlElement
-    public void setMesssage(String messsage) {
-        this.messsage = messsage;
-    }
-    
     
 }
