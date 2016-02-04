@@ -8,6 +8,7 @@ package com.chat.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -42,5 +43,21 @@ public class Group extends Messageable implements Serializable{
     public void addSubscribers(User u){
         subscribers.add(u);
     }
-    
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Group))return false;
+        Group otherGroup = (Group)other;
+        return this.name.equals(otherGroup.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.name);
+        hash = 73 * hash + Objects.hashCode(this.subscribers);
+        return hash;
+    }
+
 }
