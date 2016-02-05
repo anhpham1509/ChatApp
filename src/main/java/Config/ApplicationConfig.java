@@ -6,8 +6,6 @@
 package Config;
 
 import AuthConfig.AuthenticationFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -16,7 +14,7 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
  *
  * @author minhcao
  */
-@ApplicationPath("app")
+@ApplicationPath("/app")
 public class ApplicationConfig extends ResourceConfig {
 
     public ApplicationConfig() {

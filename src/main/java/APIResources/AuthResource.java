@@ -45,6 +45,7 @@ public class AuthResource {
     }
     
     @Path("/test")
+    @RolesAllowed("User")
     @GET
     public String testAuth(){
         return "<html><body><h1>Hello, World!</body></h1></html>";
@@ -59,7 +60,9 @@ public class AuthResource {
 
         out.println("token "+tokenResult.getAccessToken()+" "+tokenResult.getTokenType()+" "+tokenResult.toString());
         AuthService.setAccessToken(tokenResult.getAccessToken());
-        return Response.seeOther(UriBuilder.fromUri(context.getBaseUri()).path("auth/test").build()).build();
+        String baseUri = context.getBaseUri().toString();
+        String rootUri = baseUri.replaceFirst("app", "");
+        return Response.seeOther(UriBuilder.fromUri(rootUri).build()).build();
     }
     
 //    @POST
@@ -95,7 +98,7 @@ public class AuthResource {
         final OAuth2CodeGrantFlow flow = OAuth2ClientSupport.googleFlowBuilder(
                 AuthService.getClientIdentifier(),
                 redirectURI,
-                "https://www.googleapis.com/auth/userinfo.profile")
+                "profile email")
                 .prompt(OAuth2FlowGoogleBuilder.Prompt.CONSENT).build();
 
         AuthService.setFlow(flow);

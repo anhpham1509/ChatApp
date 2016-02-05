@@ -5,15 +5,24 @@
  */
 package AuthConfig;
 
-import Config.*;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import java.io.IOException;
 import static java.lang.System.out;
 import java.lang.reflect.Method;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Priority;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -64,22 +73,36 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 requestContext.abortWith(ACCESS_DENIED);
                 return;
             }
-            String encodedUserPassword = authorization.get(0).replace(AUTHENTICATION_SCHEME + " ", "");
-            out.println(encodedUserPassword);
-            String usernameAndPassword = new String(Base64.decode(encodedUserPassword.getBytes()));
-            out.println(usernameAndPassword);
-            String[] info = usernameAndPassword.split(":");
-            if (!isUserAllowed(info[0], info[1])) {
+            String token = authorization.get(0).replace(AUTHENTICATION_SCHEME + " ", "");
+            out.println(token);
+            if (!isUserAllowed(token)) {
                 requestContext.abortWith(ACCESS_DENIED);
             }
             
         }
     }
 
-    private boolean isUserAllowed(String username, String password) {
-        out.println(username+":"+password);
-        if(username.equals("user") && password.equals("user")) {
-            return true;
+    private boolean isUserAllowed(String token) {
+
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+                .setAudience(Arrays.asList(AuthService.getClientIdentifier().getClientId()))
+                .build();
+
+        GoogleIdToken idToken;
+        try {
+            idToken = verifier.verify(token);
+            out.println("id: "+idToken);
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
+                System.out.println("User ID: " + payload.getSubject());
+                return true;
+            } else {
+                throw new NotAuthorizedException("Invalid token.");
+            }
+        } catch (GeneralSecurityException ex) {
+            Logger.getLogger(AuthenticationFilter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AuthenticationFilter.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
