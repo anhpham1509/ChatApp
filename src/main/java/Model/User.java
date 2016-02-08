@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.chat.model;
+package Model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.ws.rs.container.AsyncResponse;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,14 +21,17 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 public class User extends Messageable implements Serializable{
     private String email;
+    private String password;
     private String role;
     private String token;
-    private AsyncResponse async;
-
-    public User() {
-
-    }
+    private Set<Group> subcriptions;
     
+    private transient AsyncResponse async;
+    public User() {
+        subcriptions=new HashSet<>();
+    }
+
+
     public String getEmail() {
         return email;
     }
@@ -34,7 +39,33 @@ public class User extends Messageable implements Serializable{
     public void setEmail(String email) {
         this.email = email;
     }
+    
+    public String getPassword() {
+        return password;
+    }
+    @XmlTransient
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
+    public Set<Group> getSubcriptions() {
+        return subcriptions;
+    }
+    @XmlTransient
+    public void setSubcriptions(Set<Group> subcriptions) {
+        this.subcriptions = subcriptions;
+    }
+    
+/*
+    public boolean isIsOnline() {
+        return isOnline;
+    }
+    @XmlTransient
+    public void setIsOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+ */   
+    
     public String getRole() {
         return role;
     }
@@ -70,9 +101,11 @@ public class User extends Messageable implements Serializable{
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 31 * hash + Objects.hashCode(this.email);
-        hash = 31 * hash + Objects.hashCode(this.role);
+        hash = 23 * hash + Objects.hashCode(this.email);
+        hash = 23 * hash + Objects.hashCode(this.role);
         return hash;
     }
+
+
     
 }

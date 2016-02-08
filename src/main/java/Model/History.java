@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.chat.model;
+package Model;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,10 +11,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -25,11 +26,11 @@ public class History implements Serializable{
     private static History instance = null;
     private List<HistoryEntry> entries;
     private List<User> users;
-    private List<Group> groups;
+    private Set<Group> groups;
     private History() {
         entries = new ArrayList<>();
         users = new ArrayList<>(); 
-        groups=new ArrayList<>(); 
+        groups=new HashSet<>(); 
     }
 
     public static History getInstance() {
@@ -62,7 +63,7 @@ public class History implements Serializable{
         this.users.add(u);
     }
 
-    public List<Group> getGroups() {
+    public Set<Group> getGroups() {
         return groups;
     }
     public void addGroup(Group g) {

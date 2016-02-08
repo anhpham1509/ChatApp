@@ -31,6 +31,13 @@
                     </div>
                 </fieldset>
             </form>
+        <div class="container">
+
+                <input type="text" name="email" />
+                <input type="password" name="password"/>
+                <input type="submit" value="Login" onclick="login()"/>
+                <input type="submit" value="Register" onclick="register()"/>
+        </div>
         </div>
     </body>
 </html>

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.chat.model;
+package Model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,10 +19,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Group extends Messageable implements Serializable{
     private String name;
-    private List<User> subscribers;
+    //private List<User> subscribers;
 
     public Group() {
-        subscribers=new ArrayList<>();
+      //  subscribers=new ArrayList<>();
     }
 
     public String getName() {
@@ -32,7 +32,7 @@ public class Group extends Messageable implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-
+/*
     public List<User> getSubscribers() {
         return subscribers;
     }
@@ -43,6 +43,7 @@ public class Group extends Messageable implements Serializable{
     public void addSubscribers(User u){
         subscribers.add(u);
     }
+*/
     @Override
     public boolean equals(Object other){
         if (other == null) return false;
@@ -56,7 +57,7 @@ public class Group extends Messageable implements Serializable{
     public int hashCode() {
         int hash = 7;
         hash = 73 * hash + Objects.hashCode(this.name);
-        hash = 73 * hash + Objects.hashCode(this.subscribers);
+        //hash = 73 * hash + Objects.hashCode(this.subscribers);
         return hash;
     }
 

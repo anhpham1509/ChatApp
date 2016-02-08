@@ -3,37 +3,78 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+var token="";
+var email="";
 $(document).ready(function () {
-    feedMessage();
+
+    
     $('#do-chat').submit(function (evt) {
+        var xml=composeMessage();
+        console.log(xml);
         evt.preventDefault();
         $.ajax({
             url: '/ChatApp/app/chat',
             method: "POST",
-            data: $("#message").val(),
-            contentType: "text/plain",
-            dataType: "text",
+            contentType: "application/xml",
+            data:xml,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
             success: function (result) {
             }
         });
     });
 });
 
-function onMessageSuccess(message) {
-    $("#response").append('<tr><td class="received">' + message + '</td></tr>');
-}
 
+function composeMessage(){
+    return '<historyEntry><from><email>'+email+'</email></from><messsage>'+$("#message").val()+'</messsage><time>null</time></historyEntry>';
+     //"<historyEntry><from><email>lucky7</email></from><messsage>ga ga g222asda</messsage><time>null</time></historyEntry>";
+
+}
+function onMessageSuccess(data) {
+    $("#response").append('<tr><td class="received">' + $(data).find('email').text()+' said :'+$(data).find('messsage').text() + '</td></tr>');
+}
+function auth(url){
+    var temp=$("input[name=email]").val();
+    $.ajax({
+            url: url,
+            method: "POST",
+            data:{
+            'email'              : temp,
+            'password'             : $("input[name=password]").val()
+        },
+            dataType: "text",
+            success: function (result) {
+                alert(result);
+                email=temp;
+                token=result;
+                feedMessage();
+            },
+            failure: function (result) {
+                alert(result);
+            }
+        });
+}
+function login(){
+    auth("/ChatApp/app/auth/login");
+}
+function register(){
+     auth("/ChatApp/app/auth/register");
+}
 function feedMessage() {
     $.ajax({
         url: '/ChatApp/app/chat',
         method: "GET",
-        dataType: "text",
+        dataType: "xml",
+        beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
         success: function (result) {
             onMessageSuccess(result);
             feedMessage();
         },
-        error: function(){
+        error: function () {
             feedMessage();
         }
     });
