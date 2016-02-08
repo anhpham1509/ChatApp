@@ -11,6 +11,7 @@ import Model.HistoryEntry;
 import Model.User;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -103,7 +104,7 @@ public class ChatResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public String broadcast(final HistoryEntry e) {
-        System.out.println("Toi day roi");
+
         h.addEntry(e);
         h.save();
         ex.submit(new Runnable() {
@@ -112,6 +113,7 @@ public class ChatResource {
                 synchronized(users){
                     Iterator<User> iterator = users.iterator();
                     while(iterator.hasNext()){
+                        
                         iterator.next().getAsync().resume(e);
                     }
                 }
@@ -127,7 +129,10 @@ public class ChatResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public String chatTo(final HistoryEntry e,@PathParam("param") String param) {
+        
+        System.out.println("vao @");
         if(param.charAt(0)=='@'){
+            System.out.println("vao @");
             final String email=param.substring(1);
             ex.submit(new Runnable() {
             @Override
@@ -136,6 +141,7 @@ public class ChatResource {
                     Iterator<User> iterator = users.iterator();
                     while(iterator.hasNext()){
                         User user = iterator.next();
+                        
                         if(user.getEmail().equals(email)){
                             user.getAsync().resume(e);
                             e.setTo(user);
@@ -146,7 +152,7 @@ public class ChatResource {
             }
         });
             
-        }else if(param.charAt(0)=='#'){
+        }else if(param.charAt(0)=='*'){
             final String group_name=param.substring(1);
             ex.submit(new Runnable() {
             @Override
@@ -155,17 +161,24 @@ public class ChatResource {
                     Iterator<User> iterator = users.iterator();
                     while(iterator.hasNext()){
                         User user = iterator.next();
-                        Group g = new Group();
-                        g.setName(group_name);
-                        e.setTo(g);
-                        if(user.getSubcriptions().contains(g)){
-                            user.getAsync().resume(e);
+                        System.out.println(user.getEmail());
+                        for(Group g:user.getSubcriptions()){
+   
+                            if(g.getName().equals(group_name)){
+                                System.out.println("Toi day roi dc roi:"+group_name);
+                                System.out.println("Email user "+user.getEmail());
+                                 user.getAsync().resume(e);
+                                 e.setTo(g);
+                                 break;
+                            }
                         }
                     }
                 }
             }
         });
           
+        }else{
+            System.out.println("eo vao");
         }
         
         

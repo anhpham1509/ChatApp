@@ -24,7 +24,7 @@ public class HistoryEntry implements Serializable{
     private String messsage;
     
     public HistoryEntry(){
-        
+        this.time = new Date();
     }
     public HistoryEntry(User from, Messageable to,String message) {
         this.time = new Date();
