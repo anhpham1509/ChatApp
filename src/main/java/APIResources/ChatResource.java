@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -48,7 +47,7 @@ public class ChatResource {
     /**
      * Retrieves representation of an instance of Resources.ChatResource
      *
-     * @return an instance of java.lang.String
+     * @param asyncResp
      */
     @PermitAll
     @GET

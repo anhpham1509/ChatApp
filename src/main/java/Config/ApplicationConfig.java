@@ -8,7 +8,6 @@ package Config;
 import AuthConfig.AuthenticationFilter;
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 /**
  *
@@ -20,6 +19,5 @@ public class ApplicationConfig extends ResourceConfig {
     public ApplicationConfig() {
         packages("APIResources");
         register(AuthenticationFilter.class);
-//        register((new JacksonJaxbJsonProvider(new ObjectMapper(),JacksonJaxbJsonProvider.DEFAULT_ANNOTATIONS)));
     }
 }
