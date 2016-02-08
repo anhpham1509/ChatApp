@@ -52,10 +52,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     private ResourceInfo resourceInfo;
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
     private static final String AUTHENTICATION_SCHEME = "Basic";
-    private static final Response ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED)
-            .entity("You cannot access this resource").build();
-    private static final Response ACCESS_FORBIDDEN = Response.status(Response.Status.FORBIDDEN)
-            .entity("Access blocked for all users !!").build();
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -69,7 +65,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         if (method.isAnnotationPresent(DenyAll.class)) {
             out.println("in2");
-            requestContext.abortWith(ACCESS_DENIED);
+            requestContext.abortWith(unauthorizedResponse());
             return;
         }
 
@@ -78,14 +74,14 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             MultivaluedMap<String, String> headers = requestContext.getHeaders();
             List<String> authorization = headers.get(AUTHORIZATION_PROPERTY);
             if (authorization == null || authorization.isEmpty()) {
-                            out.println("in3");
-                requestContext.abortWith(ACCESS_DENIED);
+                out.println("in3");
+                requestContext.abortWith(unauthorizedResponse());
                 return;
             }
             String token = authorization.get(0).replace(AUTHENTICATION_SCHEME + " ", "");
             out.println(token);
             if (!isUserAllowed(token)) {
-                requestContext.abortWith(ACCESS_DENIED);
+                requestContext.abortWith(unauthorizedResponse());
             }
         }
     }
@@ -98,12 +94,12 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             connection.connect();
 
             int code = connection.getResponseCode();
-            out.println("code "+code);
-            if(code==200){
+            out.println("code " + code);
+            if (code == 200) {
                 out.println("in success");
-                return false;    
+                return true;
             } else {
-                                out.println("in fale");
+                out.println("in fale");
 
                 return false;
             }
@@ -131,5 +127,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             Logger.getLogger(AuthenticationFilter.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    private Response unauthorizedResponse() {
+        return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("You cannot access this resource")
+                .build();
     }
 }
