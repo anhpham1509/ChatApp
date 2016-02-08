@@ -46,7 +46,7 @@
             <a href="app/auth/test">Secured resource</a>
         </div>
         <div class="container">
-            <a id="authTest">Working secured resource</a>
+            <button id="authTest">Working secured resource</button>
         </div>
     </body>
 </html>

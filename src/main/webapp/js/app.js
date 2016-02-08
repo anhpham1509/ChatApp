@@ -5,6 +5,8 @@
  */
 
 $(document).ready(function () {
+    var globalToken = "";
+    getToken();
     feedMessage();
     $("#do-chat").submit(function (evt) {
         evt.preventDefault();
@@ -20,12 +22,12 @@ $(document).ready(function () {
     });
 
     $("#authTest").click(function (evt) {
-        evt.preventDefault();
+        console.log("1 :"+window.globalToken);
         $.ajax({
             url: "/ChatApp/app/auth/test",
             method: "GET",
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa("user:user"));
+                xhr.setRequestHeader("Authorization", "Basic " + window.globalToken);
             },
             success: function(result){
                 alert(result);
@@ -36,6 +38,21 @@ $(document).ready(function () {
         });
     });
 });
+
+function getToken(){
+    var path = window.location.search;
+    console.log(path);
+    if(path.indexOf("token")!==-1){
+        var token = window.location.search.split("token=")[1];
+        globalToken = token;
+        localStorage.setItem("token", token);
+        location.replace(window.location.origin+"/ChatApp/");
+        console.log(localStorage.getItem("token"));
+    } else {
+        globalToken = localStorage.getItem("token");
+        console.log("2 :"+globalToken);
+    }
+}
 
 function onMessageSuccess(message) {
     $("#response").append("<tr><td class='received'>" + message + "</td></tr>");

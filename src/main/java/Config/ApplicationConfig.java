@@ -19,7 +19,6 @@ public class ApplicationConfig extends ResourceConfig {
 
     public ApplicationConfig() {
         packages("APIResources");
-        register(RolesAllowedDynamicFeature.class);
         register(AuthenticationFilter.class);
 //        register((new JacksonJaxbJsonProvider(new ObjectMapper(),JacksonJaxbJsonProvider.DEFAULT_ANNOTATIONS)));
     }

@@ -8,6 +8,7 @@ package APIResources;
 import AuthConfig.AuthService;
 import static java.lang.System.out;
 import java.net.URI;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -33,6 +34,7 @@ import org.glassfish.jersey.client.oauth2.TokenResult;
  * @author minhcao
  */
 @Path("/auth")
+@PermitAll
 public class AuthResource {
 
     @Context
@@ -48,6 +50,7 @@ public class AuthResource {
     @RolesAllowed("User")
     @GET
     public String testAuth(){
+        out.println("in in in");
         return "<html><body><h1>Hello, World!</body></h1></html>";
     }
     
@@ -61,10 +64,15 @@ public class AuthResource {
         out.println("token "+tokenResult.getAccessToken()+" "+tokenResult.getTokenType()+" "+tokenResult.toString());
         AuthService.setAccessToken(tokenResult.getAccessToken());
         String baseUri = context.getBaseUri().toString();
-        String rootUri = baseUri.replaceFirst("app", "");
-        return Response.seeOther(UriBuilder.fromUri(rootUri).build()).build();
+        String rootUri = baseUri.replaceFirst("app/", "");
+        return Response.seeOther(UriBuilder.fromUri(rootUri).queryParam("token", tokenResult.getAccessToken()).build()).build();
     }
     
+    @Path("/verify/finalize")
+    @GET
+    public String sendToken(){
+        return "<html><body><p>Redirecting to main page...</body></p></html>";
+    }
 //    @POST
 //    @Produces(MediaType.TEXT_PLAIN)
 //    @Consumes("application/x-www-form-urlencoded")
