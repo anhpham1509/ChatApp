@@ -5,6 +5,7 @@
  */
 package APIResources;
 
+import Model.Group;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,6 +24,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
+import Model.History;
+import Model.HistoryEntry;
+import Model.User;
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.PathParam;
 
 /**
  * REST Web Service
