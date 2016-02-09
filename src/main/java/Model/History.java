@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class History implements Serializable{
     private Set<Group> groups;
     private History() {
         entries = new ArrayList<>();
-        users = new ArrayList<>(); 
+        users = new ArrayList<User>();
         groups=new HashSet<>(); 
     }
 

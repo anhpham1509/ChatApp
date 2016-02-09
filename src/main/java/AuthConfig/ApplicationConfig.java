@@ -9,6 +9,7 @@ import APIResources.AuthResource;
 import APIResources.ChatResource;
 import APIResources.GroupResource;
 import APIResources.HistoryResource;
+import APIResources.UserResource;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -18,11 +19,9 @@ import org.glassfish.jersey.server.ResourceConfig;
 @javax.ws.rs.ApplicationPath("app")
 public class ApplicationConfig extends ResourceConfig {
     public ApplicationConfig(){
-        super(ChatResource.class,AuthResource.class,GroupResource.class,HistoryResource.class);
-
+        super(ChatResource.class,AuthResource.class,GroupResource.class,HistoryResource.class,UserResource.class);
 
         register(AuthenticationFilter.class);
-
     }
 
     

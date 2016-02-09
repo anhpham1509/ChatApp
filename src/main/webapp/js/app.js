@@ -7,8 +7,10 @@ var token="";
 var email="";
 $(document).ready(function () {
 
-    
-    $('#do-chat').submit(function (evt) {
+    if (localStorage.getItem('userToken')) {
+     token =localStorage.getItem('userToken');
+    }
+/*    $('#do-chat').submit(function (evt) {
         var xml=composeMessage();
         console.log(xml);
         evt.preventDefault();
@@ -23,18 +25,150 @@ $(document).ready(function () {
             success: function (result) {
             }
         });
-    });
+    });*/
 });
+function normalChat(){
+    var xml=composeMessage();
+        console.log(xml);
 
+        $.ajax({
+            url: '/ChatApp/app/chat',
+            method: "POST",
+            contentType: "application/xml",
+            data:xml,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
+            success: function (result) {
+            }
+        });
+}
 
+function toGroupChat(){
+    $("#response").html(" ");
+    $("input[name=sendMessage]").val("Send Group Message").attr('onclick', '').click(groupChat);
+    getGroupHistory();
+}
+function toSingleChat(){
+    $("#response").html(" ");
+    $("input[name=sendMessage]").val("Send Private Message").attr('onclick', '').click(singleChat);
+}
+function singleChat(){
+    var xml=composeMessage();
+        console.log(xml);
+    //    evt.preventDefault();
+        $.ajax({
+            url: '/ChatApp/app/chat/@'+$("select[name=userlist]").val(),
+            method: "POST",
+            contentType: "application/xml",
+            data:xml,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
+            success: function (result) {
+            }
+        });
+}
+function groupChat(){
+    var xml=composeMessage();
+        console.log(xml);
+    //    evt.preventDefault();
+        $.ajax({
+            url: '/ChatApp/app/chat/*'+$("select[name=grouplist]").val(),
+            method: "POST",
+            contentType: "application/xml",
+            data:xml,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
+            success: function (result) {
+            }
+        });
+}
+function createGroup(){
+    doAction("/ChatApp/app/group/create/","POST","<group><name>"+$("input[name=groupName]").val()+"</name></group>","application/xml",listGroup);
+}
+function listGroup(){
+    doAction("/ChatApp/app/group/all","GET",null,"application/xml",updateGroup);
+}
+function listUser(){
+    doAction("/ChatApp/app/user/","GET",null,"application/xml",updateUser);
+}
+function listUserGroup(){
+    doAction("/ChatApp/app/group/","GET",null,"application/xml",updateUserGroup);
+}
+function updateUser(data){
+    $("select[name=userlist]").html(" ");
+    $(data).find("user").each(function() {
+        
+        //var value = $(this).find('name').attr('value');
+        $("select[name=userlist]").append("<option>"+this.innerHTML+"</option>");
+    });
+    
+}
+function updateUserGroup(data){
+    $("select[name=joinedgrouplist]").html(" ");
+    $(data).find("group").each(function() {
+        
+        //var value = $(this).find('name').attr('value');
+        $("select[name=joinedgrouplist]").append("<option>"+this.innerHTML+"</option>");
+    });
+    
+}
+function updateGroup(data){
+    $("select[name=grouplist]").html(" ");
+    $(data).find("group").each(function() {
+        
+        //var value = $(this).find('name').attr('value');
+        $("select[name=grouplist]").append("<option>"+this.innerHTML+"</option>");
+    });
+    
+}
+function joinGroup(){
+    doAction("/ChatApp/app/group/join/","POST","<group><name>"+$("select[name=grouplist]").val()+"</name></group>","application/xml",doSomething);
+}
+function doSomething(data){
+    $("#response").html(" ");
+    
+    alert(data);
+}
+function getGroupHistory(){
+    doAction("/ChatApp/app/history/*"+$("select[name=grouplist]").val(),"GET",null,"application/xml",updateHistory);
+}
+function updateHistory(data){
+     $(data).find("historyEntry").each(function(n) {
+       var message=$(this).find("messsage").text();
+       var email=$(this).find("email").text();
+       var time= new Date($(this).find("time").text());
+        onMessageSuccess(email,message,time);
+    });
+}
+function onMessageSuccess(email,message,time) {
+    $("#response").append('<tr><td class="received">' + time.toString()+" : "+email+" said : "+message + '</td></tr>');
+}
+function getPrivateHistory(){
+    
+}
+function doAction(url,method,data,contentType,callback){
+    $.ajax({
+            url: url,
+            method: method,
+            contentType: contentType,
+            data:data,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
+            success: function (result) {
+                callback(result);
+            }
+        });
+}
 function composeMessage(){
     return '<historyEntry><from><email>'+email+'</email></from><messsage>'+$("#message").val()+'</messsage><time>null</time></historyEntry>';
      //"<historyEntry><from><email>lucky7</email></from><messsage>ga ga g222asda</messsage><time>null</time></historyEntry>";
 
 }
-function onMessageSuccess(data) {
-    $("#response").append('<tr><td class="received">' + $(data).find('email').text()+' said :'+$(data).find('messsage').text() + '</td></tr>');
-}
+
 function auth(url){
     var temp=$("input[name=email]").val();
     $.ajax({
@@ -49,6 +183,7 @@ function auth(url){
                 alert(result);
                 email=temp;
                 token=result;
+                localStorage.setItem('userToken', token);
                 feedMessage();
             },
             failure: function (result) {
@@ -58,6 +193,9 @@ function auth(url){
 }
 function login(){
     auth("/ChatApp/app/auth/login");
+    listGroup();
+    listUser();
+    listUserGroup();
 }
 function register(){
      auth("/ChatApp/app/auth/register");
@@ -71,7 +209,7 @@ function feedMessage() {
                 xhr.setRequestHeader("Authorization", token);
             },
         success: function (result) {
-            onMessageSuccess(result);
+            updateHistory(result);
             feedMessage();
         },
         error: function () {

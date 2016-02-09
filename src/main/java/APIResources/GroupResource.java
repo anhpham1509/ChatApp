@@ -36,7 +36,17 @@ public class GroupResource {
     @RolesAllowed({"Admin","User"})
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public Set<Group> getGroups(){
+    public Set<Group> getGroups(@Context HttpServletRequest request){
+        int user_idx =(int)request.getAttribute("useridx");
+      
+        return users.get(user_idx).getSubcriptions();
+       
+    }
+    @RolesAllowed({"Admin","User"})
+    @Path("/all")
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public Set<Group> getAllGroups(){
         return groups;
     }
     @RolesAllowed({"Admin","User"})

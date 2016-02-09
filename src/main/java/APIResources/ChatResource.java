@@ -112,8 +112,7 @@ public class ChatResource {
             public void run() {
                 synchronized(users){
                     Iterator<User> iterator = users.iterator();
-                    while(iterator.hasNext()){
-                        
+                    while(iterator.hasNext()){    
                         iterator.next().getAsync().resume(e);
                     }
                 }
@@ -128,12 +127,13 @@ public class ChatResource {
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public String chatTo(final HistoryEntry e,@PathParam("param") String param) {
-        
+    public String chatTo(final HistoryEntry e,@PathParam("param") String param,@Context HttpServletRequest request) {
+         int user_idx =(int)request.getAttribute("useridx");
         System.out.println("vao @");
         if(param.charAt(0)=='@'){
             System.out.println("vao @");
             final String email=param.substring(1);
+            users.get(user_idx).getAsync().resume(e);
             ex.submit(new Runnable() {
             @Override
             public void run() {
@@ -148,6 +148,7 @@ public class ChatResource {
                             break;
                         }
                     }
+                    
                 }
             }
         });
