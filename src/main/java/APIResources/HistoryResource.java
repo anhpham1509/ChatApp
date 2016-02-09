@@ -28,42 +28,50 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("/history")
 public class HistoryResource {
-    private final History h =History.getInstance();
+
+    private final History h = History.getInstance();
     private final List<User> users = h.getUsers();
-    
-    
-    @RolesAllowed({"Admin","User"})
-    @Path("/{param}")
+
+    @RolesAllowed({"Admin", "User"})
+    @Path("/@{param}")
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public List<HistoryEntry> getHistory(@PathParam("param") String param,@Context HttpServletRequest request){
-        int user_idx =(int)request.getAttribute("useridx");
-        List<HistoryEntry> history=new ArrayList<>();
-        if(param.charAt(0)=='@'){
-            final String email=param.substring(1);
-            User partner=null;
-            for(User u:users){
-                if(u.getEmail().equals(email)){
-                    partner=u;
-                    break;
-                }
+    public List<HistoryEntry> getPrivateHistory(@PathParam("param") String privateTarget, @Context HttpServletRequest request) {
+        System.out.println("in private");
+        int user_idx = (int) request.getAttribute("useridx");
+        List<HistoryEntry> history = new ArrayList<>();
+        final String email = privateTarget;
+        User partner = null;
+        for (User u : users) {
+            if (u.getEmail().equals(email)) {
+                partner = u;
+                break;
             }
-            for(HistoryEntry e:h.getEntries()){
-                if(partner!=null&&(e.getTo() instanceof User )&&(((User)e.getTo()).equals(users.get(user_idx))||((User)e.getTo()).equals(partner))){
-                    history.add(e);
-                }
-            }
-        }else if(param.charAt(0)=='*'){
-            final String group_name=param.substring(1);
-            /*Group g = new Group();
-            g.setName(group_name);*/
-            for(HistoryEntry e:h.getEntries()){
-                if((e.getTo() instanceof Group )&&((Group)e.getTo()).getName().equals(group_name)){
-                    history.add(e);
-                }
+        }
+        for (HistoryEntry e : h.getEntries()) {
+            if (partner != null && (e.getTo() instanceof User) && (((User) e.getTo()).equals(users.get(user_idx)) || ((User) e.getTo()).equals(partner))) {
+                history.add(e);
             }
         }
         return history;
     }
+
     
+    @RolesAllowed({"Admin", "User"})
+    @Path("/{param}")
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public List<HistoryEntry> getGroupHistory(@PathParam("param") String groupName, @Context HttpServletRequest request) {
+        System.out.println("in group");
+        List<HistoryEntry> history = new ArrayList<>();
+        final String group_name = groupName;
+        /*Group g = new Group();
+            g.setName(group_name);*/
+        for (HistoryEntry e : h.getEntries()) {
+            if ((e.getTo() instanceof Group) && ((Group) e.getTo()).getName().equals(group_name)) {
+                history.add(e);
+            }
+        }
+        return history;
+    }
 }

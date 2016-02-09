@@ -68,12 +68,13 @@ function normalChat() {
 
 function toGroupChat() {
     $("#response").html(" ");
-    $("input[name=sendMessage]").val("Send Group Message").attr('onclick', '').click(groupChat);
+    $("input[name=sendMessage]").val("Send Group Message").attr('onclick', '').unbind().click(groupChat);
     getGroupHistory();
 }
 function toSingleChat() {
     $("#response").html(" ");
-    $("input[name=sendMessage]").val("Send Private Message").attr('onclick', '').click(singleChat);
+    $("input[name=sendMessage]").val("Send Private Message").attr('onclick', '').unbind().click(singleChat);
+    getPrivateHistory();
 }
 function singleChat() {
     var xml = composeMessage();
@@ -96,7 +97,7 @@ function groupChat() {
     console.log(xml);
     //    evt.preventDefault();
     $.ajax({
-        url: '/ChatApp/app/chat/*' + $("select[name=grouplist]").val(),
+        url: '/ChatApp/app/chat/' + $("select[name=grouplist]").val(),
         method: "POST",
         contentType: "application/xml",
         data: xml,
@@ -155,9 +156,13 @@ function doSomething(data) {
     alert(data);
 }
 function getGroupHistory() {
-    doAction("/ChatApp/app/history/*" + $("select[name=grouplist]").val(), "GET", null, "application/xml", updateHistory);
+    doAction("/ChatApp/app/history/" + $("select[name=grouplist]").val(), "GET", null, "application/xml", updateHistory);
+}
+function getPrivateHistory() {
+    doAction("/ChatApp/app/history/@" + $("select[name=userlist]").val(), "GET", null, "application/xml", updateHistory);
 }
 function updateHistory(data) {
+    console.log(data);
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
         var email = $(this).find("email").text();
@@ -167,9 +172,6 @@ function updateHistory(data) {
 }
 function onMessageSuccess(email, message, time) {
     $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
-}
-function getPrivateHistory() {
-
 }
 function doAction(url, method, data, contentType, callback) {
     $.ajax({

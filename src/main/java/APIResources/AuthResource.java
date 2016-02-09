@@ -56,20 +56,21 @@ public class AuthResource {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_XML)
-    public String register(@FormParam("email") String email,@FormParam("password") String password) {
+    public Response register(@FormParam("email") String email,@FormParam("password") String password) {
         User u = new User();
         u.setEmail(email);
         u.setPassword(password);
         u.setRole("User");
         if(h.getUsers().contains(u)){
-            return null;  
+            return Response.status(Status.NOT_ACCEPTABLE).build();
         }
         u.setToken(DigestUtils.shaHex(u.getEmail()+SECRET));
         h.addUser(u);
         h.save();
         System.out.println(u.getPassword());
-        return u.getToken();
+        return Response.ok(u.getToken()).build();
     }
+    
     @PermitAll
     @Path("/login")
     @POST

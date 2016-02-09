@@ -21,6 +21,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 /**
  *
@@ -49,6 +51,7 @@ public class GroupResource {
     public Set<Group> getAllGroups(){
         return groups;
     }
+    
     @RolesAllowed({"Admin","User"})
     @Path("{name}")
     @GET
@@ -67,43 +70,46 @@ public class GroupResource {
         
         return members;
     }
+    
     @RolesAllowed({"Admin","User"})
     @Path("/create")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public String create(Group g){
+    public Response create(Group g){
         groups.add(g);
         h.save();
-        return "Success";
+        return Response.accepted().build();
     }
+    
     @RolesAllowed({"Admin","User"})
     @Path("/join")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public String join(Group g,@Context HttpServletRequest request){
+    public Response join(Group g,@Context HttpServletRequest request){
         int useridx = (int)request.getAttribute("useridx");
         System.out.println(useridx);
         if(groups.contains(g)){
             users.get(useridx).getSubcriptions().add(g);
             h.save();
-            return "Success";
+            return Response.accepted("ok").build();
         }
-        return "Fail";
+        return Response.status(Status.NOT_ACCEPTABLE).build();
     }
+    
     @RolesAllowed({"Admin","User"})
     @Path("/leave")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public String leave(Group g,@Context HttpServletRequest request){
+    public Response leave(Group g,@Context HttpServletRequest request){
         int useridx = (int)request.getAttribute("useridx");
         if(groups.contains(g)){
             users.get(useridx).getSubcriptions().remove(g);
-            return "Success";
+            return Response.accepted().build();
         }
-        return "Fail";
+        return Response.status(Status.NOT_ACCEPTABLE).build();
     }
     
 }
