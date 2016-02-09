@@ -29,6 +29,7 @@ import org.glassfish.jersey.client.oauth2.TokenResult;
 import org.apache.commons.codec.digest.DigestUtils;
 import Model.History;
 import Model.User;
+import javax.ws.rs.core.Response.Status;
 
 /**
  * REST Web Service
@@ -74,14 +75,15 @@ public class AuthResource {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
-    public String login(@FormParam("email") String email,@FormParam("password") String password) {
+    public Response login(@FormParam("email") String email,@FormParam("password") String password) {
         for(User user:h.getUsers()){
             if(user.getEmail().equals(email)&&user.getPassword().equals(password)){
-                return user.getToken();
+                return Response.ok(user.getToken()).build();
             }
         }
-        return null;
+        return Response.status(Status.NOT_ACCEPTABLE).build();
     }
+    
     @PermitAll
     @Path("/get")
     @GET

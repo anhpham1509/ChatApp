@@ -52,7 +52,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Context
     private HttpServletRequest request;
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
-    private static final String AUTHENTICATION_SCHEME = "Basic";
+    private static final String AUTHENTICATION_SCHEME = "";
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -77,15 +77,14 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 requestContext.abortWith(unauthorizedResponse());
                 return;
             }
-            String token = authorization.get(0).replace(AUTHENTICATION_SCHEME + " ", "");
-            out.println(token);
-            if (!isUserAllowedOAuth(token) || isUserAllowed(token, rolesSet)) {
+            String token = authorization.get(0).replace(AUTHENTICATION_SCHEME, "");
+            if (!validateGoogle(token) && !validateOwnAuth(token, rolesSet)) {
                 requestContext.abortWith(unauthorizedResponse());
             }
         }
     }
 
-    private boolean isUserAllowedOAuth(String token) {
+    private boolean validateGoogle(String token) {
         try {
             URL url = new URL("https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=" + token);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -130,7 +129,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 .build();
     }
 
-    private boolean isUserAllowed(final String token, final Set<String> rolesSet) {
+    private boolean validateOwnAuth(final String token, final Set<String> rolesSet) {
         boolean isAllowed = false;
 
         //Step 1. Fetch password from database and match with password in argument
