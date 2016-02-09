@@ -29,9 +29,9 @@ public class History implements Serializable{
     private List<User> users;
     private Set<Group> groups;
     private History() {
-        entries = new ArrayList<>();
-        users = new ArrayList<User>();
-        groups=new HashSet<>(); 
+        entries = Collections.synchronizedList(new ArrayList<HistoryEntry>());
+        users = Collections.synchronizedList(new ArrayList<User>());
+        groups= new HashSet<>(); 
     }
 
     public static History getInstance() {
