@@ -13,11 +13,13 @@ $(document).ready(function() {
         email = localStorage.getItem('email');
     }
 
-    $('')
+    $('#username').html(email);
 
     feedMessage();
+    listAllGroup();
     listGroup();
     listUser();
+    addChannel();
 
     function feedMessage() {
         $.ajax({
@@ -29,8 +31,8 @@ $(document).ready(function() {
             },
             success: function (result) {
                 updateHistory(result);
-                feedMessage();
                 $("html, body").animate({ scrollTop: $('#chat').height()}, 500);
+                feedMessage();
             },
             error: function () {
                 feedMessage();
@@ -62,9 +64,16 @@ $(document).ready(function() {
     function updateUser(data) {
         $("ul#users").html(" ");
         $(data).find("email").each(function () {
-            $("ul#users").append("<li><a class='@" + this.innerHTML +"'>" + this.innerHTML + "</a></li>");
+            $("ul#users").append("<li><a href='#" + this.innerHTML + "' class='user'>" + this.innerHTML + "</a></li>");
         });
-        getPrivateHistory($('ul#users li:nth-child(3)').text());
+
+        $('.user').click(function(){
+            var elem = $(this);
+            if (elem.attr("class").match("user")){
+                getPrivateHistory(elem.html());
+            }
+        });
+        //getPrivateHistory($('ul#users li:nth-child(2)').text());
     }
     
     //Show Groups
@@ -75,14 +84,68 @@ $(document).ready(function() {
     function updateGroup(data) {
         $("ul#channels").html(" ");
         $(data).find("name").each(function () {
-            $("ul #channels").append("<li class='channel'><a href='#'>" + this.innerHTML + "</a></li>");
+            $("ul#channels").append("<li><a href='#" + this.innerHTML + "' class='channel'>" + this.innerHTML + "</a></li>");
         });
-        $('ul#channels').append("<li><form id='add-channel'><div class='form-group input-group'><input class='form-control input-group-sm' placeholder='Add new channel' type='text'>" +
-            "</div></form></li>");
+        $('ul#channels').append("\
+            <li>\
+                <a class='join-channel' href='javascript:;' data-toggle='modal'\
+                        data-target='#join-channel'>Add a new channel</a>\
+            </li>");
 
-        //getGroupHistory($('ul#channels li:nth-child(2)').text());
+        getGroupHistory($('ul#channels li:nth-child(1)').text());
+
+        $('.channel').click(function(){
+            var elem = $(this);
+            if (elem.attr("class").match("channel")){
+                getGroupHistory(elem.html());
+            }
+        });
     }
-    
+
+    //Show ALL Groups
+    function listAllGroup() {
+        callAjax("/ChatApp/app/group/all", "GET", null, "application/xml", updateAllGroup);
+    }
+
+    function updateAllGroup(data) {
+        $("ul#all-channels").html(" ");
+        $(data).find("name").each(function () {
+            $("ul#all-channels").append("\
+                <li class='left clearfix'>\
+                    <div class='chat-body clearfix'>\
+                        <div class='header'>\
+                            <strong class=primary-font'>" + this.innerHTML + "</strong>\
+                            \
+                            <div class='pull-right text-muted'>\
+                                <a href='#" + this.innerHTML+ "' class='btn btn-danger join-channel'>Join</a>\
+                            </div>\
+                        </div>\
+                        \
+                        <p>\
+                            <i class='fa fa-users'></i>6\
+                        </p>\
+                    </div>\
+                </li>");
+        });
+
+        $('.join-channel').click(function(){
+            var elem = $(this);
+            console.log(elem);
+            //AJAX join
+            console.log(elem.attr("href").slice(1));
+            joinGroup(elem.attr("href").slice(1));
+
+        });
+    }
+
+    //Join group
+    function joinGroup(group) {
+        callAjax("/ChatApp/app/group/join/", "POST", "<group><name>" + group + "</name></group>", "application/xml", doSomething);
+    }
+
+    function doSomething(data) {
+        console.log(data);
+    }
     
     //Insert Username
     
@@ -140,16 +203,29 @@ $(document).ready(function() {
             </li>";
     }
 
-    $('ul#channels').click(function(e){
-        e.preventDefault();
-        var elem = $(this);
-        console.log(elem);
-        alert(elem.attr("class").toString());
-        if (elem.attr("class").match("channel")){
-            getGroupHistory(elem.val());
-        }
-        alert("Hello World");
-    });
+    function addChannel() {
+        $('#add-channel-btn').click(function () {
+            $('.modal-footer').html("\
+            <form id='add-channel'>\
+                <div class='form-group input-group'>\
+                    <input id='new-channel' type='text' class='form-control' placeholder='Enter channel name here'>\
+                    \
+                    <span class='input-group-btn'>\
+                        <button type='submit' class='btn btn-success'>Add</button>\
+                    </span>\
+                </div>\
+            </form>");
+
+            $('#add-channel').on('submit', function (e) {
+                e.preventDefault();
+                $('.modal-footer').html("\
+                <button class='btn btn-success' id='add-channel-btn'>Add new channel</button>");
+                addChannel();
+            });
+        });
+    }
+
+
 
     //send mess
 
@@ -159,7 +235,9 @@ $(document).ready(function() {
 
         var xml = composeMessage();
         console.log(xml);
-        callAjax('/ChatApp/app/chat/' + des,"POST", xml, "application/xml", function(){});
+        callAjax('/ChatApp/app/chat/' + des,"POST", xml, "application/xml", function(){
+            $("#message").html("");
+        });
     });
 
     function composeMessage() {

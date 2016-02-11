@@ -225,7 +225,8 @@
                                 <a href="#">Channel #2</a>
                             </li>
                             <li>
-                                <a id="add-channel">Add a new channel</a>
+                                <a class="join-channel" href="javascript:;" data-toggle="modal"
+                                   data-target="#join-channel">Add a new channel</a>
                             </li>
                         </ul>
                     </li>
@@ -249,195 +250,236 @@
             <!-- /.navbar-collapse -->
         </nav>
 
-        <div id="page-wrapper">
+        <!-- Join Channel -->
+        <div id="join-channel" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Join new group</h3>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="all-channels">
+                            <li class="left clearfix">
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <strong class="primary-font">Group name</strong>
+
+                                        <div class="pull-right text-muted">
+                                            <button class="btn btn-danger join-channel">Join</button>
+
+                                        </div>
+                                    </div>
+                                    <p>
+                                        <i class="fa fa-users"></i>6
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-success" id="add-channel-btn">Add new channel</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+            <!-- / Join Channel -->
 
 
-            <!-- Page Heading -->
-            <div class="panel-heading">
-                <h3>
-                    Channel
+            <div id="chat-log">
+
+
+                <!-- Page Heading -->
+                <div class="panel-heading">
+                    <h3>
+                        Channel
                         <span class="user-status">
                             <i class="fa fa-circle"></i>
                         </span>
-                </h3>
-            </div>
+                    </h3>
+                </div>
 
 
-            <div class="panel-body well">
-                <ul id="chat">
-                    <li class="left clearfix">
+                <div class="panel-body well">
+                    <ul id="chat">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">You</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>15 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">You</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>15 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
+                        </li>
 
-                    <li class="left clearfix">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">Me</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>12 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Me</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>12 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
+                        </li>
 
-                    <li class="left clearfix">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">You</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>9 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">You</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>9 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
+                        </li>
 
-                    <li class="left clearfix">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">Me</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>6 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Me</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>6 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
+                        </li>
 
-                    <li class="left clearfix">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">You</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>15 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">You</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>15 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
+                        </li>
 
-                    <li class="left clearfix">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">Me</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>12 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Me</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>12 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
+                        </li>
 
-                    <li class="left clearfix">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">You</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>9 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">You</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>9 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
+                        </li>
 
-                    <li class="left clearfix">
+                        <li class="left clearfix">
                             <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar"
                                      class="img-circle"/>
                             </span>
 
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font">Me</strong>
-                                <small class="pull-right text-muted">
-                                    <span class="fa fa-clock-o"></span>6 mins ago
-                                </small>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Me</strong>
+                                    <small class="pull-right text-muted">
+                                        <span class="fa fa-clock-o"></span>6 mins ago
+                                    </small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                    ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
                             </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
-                                ornare
-                                dolor, quis ullamcorper ligula sodales.
-                            </p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+                        </li>
+                    </ul>
+                </div>
 
 
-            <form class="send-message">
-                <div class="form-group input-group">
+                <form class="send-message">
+                    <div class="form-group input-group">
                         <span class="input-group-btn dropup">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
@@ -448,21 +490,21 @@
                                 <li><a href="#"><i class="fa fa-fw fa-file"></i> File</a></li>
                             </ul>
                         </span>
-                    <input id="message" type="text" class="form-control" placeholder="Enter message here">
+                        <input id="message" type="text" class="form-control" placeholder="Enter message here">
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-default">
                                 <i class="fa fa-send"></i>
                             </button>
                         </span>
-                </div>
-            </form>
+                    </div>
+                </form>
 
-        </div>
-        <!-- /#page-wrapper -->
+            </div>
+            <!-- /#page-wrapper -->
 
 
-        <!-- Bootstrap Core JavaScript -->
-        <script src="js/bootstrap.min.js"></script>
+            <!-- Bootstrap Core JavaScript -->
+            <script src="js/bootstrap.min.js"></script>
 
     </body>
 
