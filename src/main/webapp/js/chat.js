@@ -67,13 +67,12 @@ $(document).ready(function() {
             $("ul#users").append("<li><a href='#" + this.innerHTML + "' class='user'>" + this.innerHTML + "</a></li>");
         });
 
-        $('.user').click(function(){
-            var elem = $(this);
-            if (elem.attr("class").match("user")){
-                getPrivateHistory(elem.html());
-            }
-        });
+        //$('.user').click(function(){
+        //    getPrivateHistory($(this).html());
+        //});
         //getPrivateHistory($('ul#users li:nth-child(2)').text());
+
+        clickEvent('user', getPrivateHistory);
     }
     
     //Show Groups
@@ -89,16 +88,17 @@ $(document).ready(function() {
         $('ul#channels').append("\
             <li>\
                 <a class='join-channel' href='javascript:;' data-toggle='modal'\
-                        data-target='#join-channel'>Add a new channel</a>\
+                        data-target='#join-channel'>Join new channel</a>\
             </li>");
 
         getGroupHistory($('ul#channels li:nth-child(1)').text());
 
-        $('.channel').click(function(){
-            var elem = $(this);
-            if (elem.attr("class").match("channel")){
-                getGroupHistory(elem.html());
-            }
+        clickEvent('channel', getGroupHistory);
+    }
+
+    function clickEvent(mode, func){
+        $('.' + mode).click(function(){
+            func($(this).html());
         });
     }
 
@@ -117,7 +117,7 @@ $(document).ready(function() {
                             <strong class=primary-font'>" + this.innerHTML + "</strong>\
                             \
                             <div class='pull-right text-muted'>\
-                                <a href='#" + this.innerHTML+ "' class='btn btn-danger join-channel'>Join</a>\
+                                <a href='#add-" + this.innerHTML+ "' class='btn btn-danger join-channel'>Join</a>\
                             </div>\
                         </div>\
                         \
@@ -132,21 +132,20 @@ $(document).ready(function() {
             var elem = $(this);
             console.log(elem);
             //AJAX join
-            console.log(elem.attr("href").slice(1));
-            joinGroup(elem.attr("href").slice(1));
-
+            console.log(elem.attr("href").slice(5));
+            joinGroup(elem.attr("href").slice(5));
         });
     }
 
     //Join group
     function joinGroup(group) {
-        callAjax("/ChatApp/app/group/join/", "POST", "<group><name>" + group + "</name></group>", "application/xml", doSomething);
+        callAjax("/ChatApp/app/group/join/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
+            function(){
+                $("<li><a href='#" + group + "' class='channel'>" + group + "</a></li>").insertBefore("ul#channels li:last-child");
+                clickEvent('channel', getGroupHistory);
+            });
     }
 
-    function doSomething(data) {
-        console.log(data);
-    }
-    
     //Insert Username
     
     //Load Message History
@@ -204,25 +203,43 @@ $(document).ready(function() {
     }
 
     function addChannel() {
+        $('#add-channel').hide();
         $('#add-channel-btn').click(function () {
-            $('.modal-footer').html("\
-            <form id='add-channel'>\
-                <div class='form-group input-group'>\
-                    <input id='new-channel' type='text' class='form-control' placeholder='Enter channel name here'>\
-                    \
-                    <span class='input-group-btn'>\
-                        <button type='submit' class='btn btn-success'>Add</button>\
-                    </span>\
-                </div>\
-            </form>");
-
+            $('#add-channel').show();
+            $('#add-channel-btn').hide();
             $('#add-channel').on('submit', function (e) {
                 e.preventDefault();
-                $('.modal-footer').html("\
-                <button class='btn btn-success' id='add-channel-btn'>Add new channel</button>");
+                console.log($("#new-channel").val());
+                createGroup($("#new-channel").val());
                 addChannel();
+                $('#add-channel-btn').show();
             });
         });
+    }
+
+    //Create group
+
+    function createGroup(group) {
+        callAjax("/ChatApp/app/group/create/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
+            function(){
+                $("ul#all-channels").append("\
+                <li class='left clearfix'>\
+                    <div class='chat-body clearfix'>\
+                        <div class='header'>\
+                            <strong class=primary-font'>" + group + "</strong>\
+                            \
+                            <div class='pull-right text-muted'>\
+                                <a href='#add-" + group + "' class='btn btn-danger join-channel'>Join</a>\
+                            </div>\
+                        </div>\
+                        \
+                        <p>\
+                            <i class='fa fa-users'></i>6\
+                        </p>\
+                    </div>\
+                </li>");
+                joinGroup(group);
+            });
     }
 
 
