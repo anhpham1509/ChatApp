@@ -8,6 +8,7 @@ $(document).ready(function () {
     var globalToken = token = "";
     var email = "";
     var inChatWith = "";
+    var user = "";
 
     getToken();
 
@@ -76,7 +77,7 @@ function toGroupChat() {
 function toSingleChat() {
     $("#response").html(" ");
     $("input[name=sendMessage]").val("Send Private Message").attr('onclick', '').unbind().click(singleChat);
-    inChatWith = "@"+$("select[name=userlist]").val();
+    inChatWith = $("select[name=userlist]").val();;
     // get history for private chat
     doAction("/ChatApp/app/history/@" + $("select[name=userlist]").val(), "GET", null, "application/xml", updateHistory);
 }
@@ -163,12 +164,42 @@ function updateHistory(data) {
     console.log(data);
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
-        var email = $(this).find("email").text();
+        var email = $(this).find("from").text();
         var time = new Date($(this).find("time").text());
-        onMessageSuccess(email, message, time);
+        $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
     });
 }
-function onMessageSuccess(email, message, time) {
+function handleNewMessage(data) {
+    console.log(data);
+    $(data).find("historyEntry").each(function (n) {
+        var message = $(this).find("messsage").text();
+        var email = $(this).find("from").text();
+        var time = new Date($(this).find("time").text());
+        var target = $(this).find("to").text();
+        onMessageSuccess(email, message, time, target);
+    });
+}
+function onMessageSuccess(email, message, time, target) {
+    // for sender display
+    if(!target){
+        $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
+        return;
+    }
+    console.log("in chat with: "+ inChatWith);
+    
+    // in group chat
+    if(!target.startsWith("@")){
+        if(target !== inChatWith){
+            return;
+        }
+    }
+    
+    // in private chat
+    if(target.startsWith("@")){
+        if(email !== inChatWith){
+            return;
+        }
+    }
     $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
 }
 function doAction(url, method, data, contentType, callback) {
@@ -202,6 +233,7 @@ function auth(url) {
         },
         dataType: "text",
         success: function (result) {
+            user = $("input[name=email]").val();
             alert(result);
             email = temp;
             token = result;
@@ -231,7 +263,7 @@ function feedMessage() {
             xhr.setRequestHeader("Authorization", token);
         },
         success: function (result) {
-            updateHistory(result);
+            handleNewMessage(result);
             feedMessage();
         },
         error: function () {

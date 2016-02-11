@@ -19,14 +19,14 @@ import javax.xml.bind.annotation.XmlTransient;
 public class HistoryEntry implements Serializable{
     private Date time;
     private User from;
-    @XmlTransient
-    private Messageable to;
+//    @XmlTransient
+    private String to;
     private String messsage;
     
     public HistoryEntry(){
         this.time = new Date();
     }
-    public HistoryEntry(User from, Messageable to,String message) {
+    public HistoryEntry(User from, String to,String message) {
         this.time = new Date();
         this.from = from;
         this.to = to;
@@ -56,11 +56,11 @@ public class HistoryEntry implements Serializable{
         this.from = from;
     }
 
-    public Messageable getTo() {
+    public String getTo() {
         return to;
     }
-    @XmlTransient
-    public void setTo(Messageable to) {
+//    @XmlTransient
+    public void setTo(String to) {
         this.to = to;
     }
     

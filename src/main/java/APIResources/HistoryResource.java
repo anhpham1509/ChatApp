@@ -40,16 +40,16 @@ public class HistoryResource {
         System.out.println("in private");
         int user_idx = (int) request.getAttribute("useridx");
         List<HistoryEntry> history = new ArrayList<>();
-        final String email = privateTarget;
-        User partner = null;
-        for (User u : users) {
-            if (u.getEmail().equals(email)) {
-                partner = u;
-                break;
-            }
-        }
+        // subjects to compare
+        final String fromEmail = users.get(user_idx).getEmail();
+        final String toEmail = privateTarget;
+        
+        // getting entries needed
         for (HistoryEntry e : h.getEntries()) {
-            if (partner != null && (e.getTo() instanceof User) && (((User) e.getTo()).equals(users.get(user_idx)) || ((User) e.getTo()).equals(partner))) {
+            String sender = e.getTo();
+            String receiver = e.getFrom().getEmail();
+            if ((sender.startsWith("@")) && sender.replaceFirst("@","").equals(fromEmail) && receiver.equals(toEmail)
+              ||(sender.startsWith("@")) && sender.replaceFirst("@","").equals(toEmail) && receiver.equals(fromEmail)) {
                 history.add(e);
             }
         }
@@ -68,7 +68,7 @@ public class HistoryResource {
         /*Group g = new Group();
             g.setName(group_name);*/
         for (HistoryEntry e : h.getEntries()) {
-            if ((e.getTo() instanceof Group) && ((Group) e.getTo()).getName().equals(group_name)) {
+            if (!e.getTo().startsWith("@") && (e.getTo()).equals(group_name)) {
                 history.add(e);
             }
         }
