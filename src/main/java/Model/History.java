@@ -31,7 +31,7 @@ public class History implements Serializable{
     private History() {
         entries = Collections.synchronizedList(new ArrayList<HistoryEntry>());
         users = Collections.synchronizedList(new ArrayList<User>());
-        groups= new HashSet<>(); 
+        groups= Collections.synchronizedSet(new HashSet<Group>()); 
     }
 
     public static History getInstance() {
@@ -72,7 +72,7 @@ public class History implements Serializable{
     }
 
   
-    private void restore() {
+    private synchronized void restore() {
         try {
             FileInputStream in = new FileInputStream("history.ser");
             ObjectInputStream obin = new ObjectInputStream(in);
@@ -90,7 +90,7 @@ public class History implements Serializable{
         entries = new ArrayList<>();*/
     }
 
-    public void save() {
+    public synchronized void save() {
         try {
             FileOutputStream out = new FileOutputStream("history.ser");
             ObjectOutputStream obout = new ObjectOutputStream(out);

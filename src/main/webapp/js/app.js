@@ -7,6 +7,7 @@
 $(document).ready(function () {
     var globalToken = token = "";
     var email = "";
+    var inChatWith = "";
 
     getToken();
 
@@ -52,7 +53,6 @@ function normalChat() {
     var xml = composeMessage();
     console.log(xml);
 
-    $("#response").append("<tr><td class='received'>" + message + "</td></tr>");
     $.ajax({
         url: '/ChatApp/app/chat',
         method: "POST",
@@ -69,12 +69,16 @@ function normalChat() {
 function toGroupChat() {
     $("#response").html(" ");
     $("input[name=sendMessage]").val("Send Group Message").attr('onclick', '').unbind().click(groupChat);
-    getGroupHistory();
+    inChatWith = $("select[name=joinedgrouplist]").val();
+    // get history for group chat
+    doAction("/ChatApp/app/history/" + $("select[name=joinedgrouplist]").val(), "GET", null, "application/xml", updateHistory);
 }
 function toSingleChat() {
     $("#response").html(" ");
     $("input[name=sendMessage]").val("Send Private Message").attr('onclick', '').unbind().click(singleChat);
-    getPrivateHistory();
+    inChatWith = "@"+$("select[name=userlist]").val();
+    // get history for private chat
+    doAction("/ChatApp/app/history/@" + $("select[name=userlist]").val(), "GET", null, "application/xml", updateHistory);
 }
 function singleChat() {
     var xml = composeMessage();
@@ -97,7 +101,7 @@ function groupChat() {
     console.log(xml);
     //    evt.preventDefault();
     $.ajax({
-        url: '/ChatApp/app/chat/' + $("select[name=grouplist]").val(),
+        url: '/ChatApp/app/chat/' + $("select[name=joinedgrouplist]").val(),
         method: "POST",
         contentType: "application/xml",
         data: xml,
@@ -154,12 +158,6 @@ function doSomething(data) {
     $("#response").html(" ");
 
     alert(data);
-}
-function getGroupHistory() {
-    doAction("/ChatApp/app/history/" + $("select[name=grouplist]").val(), "GET", null, "application/xml", updateHistory);
-}
-function getPrivateHistory() {
-    doAction("/ChatApp/app/history/@" + $("select[name=userlist]").val(), "GET", null, "application/xml", updateHistory);
 }
 function updateHistory(data) {
     console.log(data);

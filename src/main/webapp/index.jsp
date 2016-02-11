@@ -33,7 +33,9 @@
                             room</button>
                     </div>
                 </fieldset>
-            
+        <div class="container">
+            <p id="newPrivateMessage"></p>
+        </div>
         <div class="container">
 
                 <input type="text" name="email" />
