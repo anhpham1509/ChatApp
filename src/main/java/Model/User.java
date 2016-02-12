@@ -95,7 +95,7 @@ public class User extends Messageable implements Serializable{
         if (other == this) return true;
         if (!(other instanceof User))return false;
         User otherUser = (User)other;
-        return this.email.equals(otherUser.email)&&this.role.equals(otherUser.role);
+        return this.email.equals(otherUser.email);
     }
 
     @Override

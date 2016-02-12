@@ -123,7 +123,7 @@ public class ChatResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Response chatToPrivate(final HistoryEntry e, @PathParam("param") String targetPrivate, @Context HttpServletRequest request) {
         int user_idx = (int) request.getAttribute("useridx");
-        System.out.println("vao group");
+        System.out.println("in private chat");
         final String email = targetPrivate;
         users.get(user_idx).getAsync().resume(e);
         ex.submit(new Runnable() {
@@ -135,8 +135,8 @@ public class ChatResource {
                         User user = iterator.next();
 
                         if (user.getEmail().equals(email)) {
+                            e.setTo("@"+email);
                             user.getAsync().resume(e);
-                            e.setTo(user);
                             break;
                         }
                     }
@@ -156,7 +156,7 @@ public class ChatResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response chatToGroup(final HistoryEntry e, @PathParam("param") String param, @Context HttpServletRequest request) {
-        System.out.println("in group");
+        System.out.println("in group chat");
         int user_idx = (int) request.getAttribute("useridx");
         final String group_name = param;
         users.get(user_idx).getAsync().resume(e);
@@ -172,8 +172,8 @@ public class ChatResource {
 
                             if (g.getName().equals(group_name)) {
                                 System.out.println("Email user " + user.getEmail());
+                                e.setTo(group_name);
                                 user.getAsync().resume(e);
-                                e.setTo(g);
                                 break;
                             }
                         }
