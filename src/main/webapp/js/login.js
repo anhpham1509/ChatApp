@@ -12,7 +12,7 @@ $(document).ready(function () {
         $(this).removeClass('input-error');
     });
 
-    $('.login-form').on('submit', function (e) {
+    $('#sign-in-btn').click(function (e) {
         e.preventDefault();
 
         $(this).find('input[type="text"], input[type="password"]').each(function () {
@@ -47,5 +47,40 @@ $(document).ready(function () {
 
     });
 
+    $('#sign-up-btn').click(function (e) {
+        //e.preventDefault();
+
+        $(this).find('input[type="text"], input[type="password"]').each(function () {
+            if ($(this).val() == "") {
+                e.preventDefault();
+                $(this).addClass('input-error');
+            }
+            else {
+                $(this).removeClass('input-error');
+            }
+        });
+
+        var email = $('#username').val();
+        var password = $('#password').val();
+
+        $.ajax({
+            url: "/ChatApp/app/auth/register",
+            method: "POST",
+            data: {
+                'email': email,
+                'password': password
+            },
+            dataType: "text",
+            success: function (result) {
+                localStorage.setItem('token', result);
+                localStorage.setItem('email', email); // no need in the future
+                window.location = location.origin + '/ChatApp/chat.html';
+            },
+            failure: function (result) {
+                alert(result);
+            }
+        });
+
+    });
 
 });

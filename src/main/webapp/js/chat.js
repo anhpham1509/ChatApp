@@ -293,9 +293,9 @@ $(document).ready(function () {
         var des = $('form.send-message').attr("id");
 
         var xml = composeMessage();
-        console.log(xml);
+        //console.log(xml);
         callAjax('/ChatApp/app/chat/' + des, "POST", xml, "application/xml", function () {
-            $("#message").html("");
+            $("#message").val("");
         });
     });
 
@@ -311,12 +311,12 @@ $(document).ready(function () {
 
         if (path.indexOf("token") !== -1) {
             var token = window.location.search.split("token=")[1];
-            globalToken = token;
+            //globalToken = token;
             localStorage.setItem("token", token);
             location.replace(window.location.origin + "/ChatApp/");
             console.log(localStorage.getItem("token"));
         } else {
-            globalToken = localStorage.getItem("token");
+            token = localStorage.getItem("token");
         }
     }
 
