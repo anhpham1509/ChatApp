@@ -27,6 +27,13 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
+        <!-- Authentication -->
+        <script type="text/javascript">
+            if (! localStorage.getItem('token')) {
+                location.assign(location.origin + '/ChatApp/');
+            }
+        </script>
+
         <!-- jQuery -->
         <script src="js/jquery-1.12.0.min.js"></script>
 
@@ -204,7 +211,7 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="#" id="log-out"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -222,7 +229,7 @@
                                 <a href="#">Channel #1</a>
                             </li>
                             <li>
-                                <a href="#">Channel #2</a>
+                                <a href="#">Channel #2<span class="badge"></span></a>
                             </li>
                             <li>
                                 <a class="join-channel" href="javascript:;" data-toggle="modal"

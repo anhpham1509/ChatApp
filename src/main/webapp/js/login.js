@@ -36,13 +36,9 @@ $(document).ready(function () {
             },
             dataType: "text",
             success: function (result) {
-                localStorage.setItem('userToken', result);
-                localStorage.setItem('email', email);
+                localStorage.setItem('token', result);
+                localStorage.setItem('email', email); // no need in the future
                 window.location = location.origin + '/ChatApp/chat.html';
-                //listGroup();
-                //listUser();
-                //listUserGroup();
-                //feedMessage();
             },
             failure: function (result) {
                 alert(result);
