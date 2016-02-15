@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     var token = localStorage.getItem("token");
     var email = localStorage.getItem('email');
-    var currentTarget = "";
+    var target = "";
     var joinedGroups = [];
 
     getToken();
@@ -61,14 +61,14 @@ $(document).ready(function () {
         $("ul#users").html(" ");
         $(data).find("email").each(function () {
             if (this.innerHTML !== email) {
-                $("ul#users").append("<li><a href='#" + this.innerHTML + "' class='user'>" + this.innerHTML + "</a></li>");
+                $("ul#users").append("<li><a href='#" + this.innerHTML + "' class='user'>" + this.innerHTML + " <span class='badge'></span></a></li>");
             }
         });
 
         //getPrivateHistory($('ul#users li:nth-child(2)').text());
 
         $('.user').click(function () {
-            getPrivateHistory($(this).html());
+            getPrivateHistory($(this).attr("href").slice(1));
         });
     }
 
@@ -83,7 +83,7 @@ $(document).ready(function () {
         $("ul#channels").html(" ");
         $(data).find("name").each(function () {
             joinedGroups.push(this.innerHTML);
-            $("ul#channels").append("<li><a href='#" + this.innerHTML + "' class='channel'>" + this.innerHTML + "</a></li>");
+            $("ul#channels").append("<li><a href='#" + this.innerHTML + "' class='channel'>" + this.innerHTML + " <span class='badge'></span></a></li>");
         });
         //console.log(joinedGroups);
         $('ul#channels').append("\
@@ -96,7 +96,7 @@ $(document).ready(function () {
 
 
         $('.channel').click(function () {
-            getGroupHistory($(this).html());
+            getGroupHistory($(this).attr("href").slice(1));
         });
         listAllGroup();
     }
@@ -179,7 +179,8 @@ $(document).ready(function () {
 
     // Load Group Message
     function getGroupHistory(group) {
-        currentTarget = group;
+        target = group;
+        $("a.channel[href='#" + group + "'] span").html("");
         $('.panel-heading h3').html("Channel " + group);
         $('form.send-message').attr("id", group);
         $("ul#chat").html("");
@@ -198,30 +199,76 @@ $(document).ready(function () {
         $("html, body").animate({scrollTop: $('#chat').height()}, 500);
     }
 
-    // Poll new mess
+    // Pooling new message
     function updateNewMess(data) {
         $(data).find("historyEntry").each(function (n) {
             var message = $(this).find("messsage").text();
             var from = $(this).find("email").text();
             var time = new Date($(this).find("time").text());
-            var target = $(this).find("to").text();
+            var to = $(this).find("to").text();
 
-            if (target.startsWith("@")) { //private chat
-                if (target.slice(1) == email) {
-                    if (from == currentTarget){
-                        $("ul#chat").append(newMessage(from, formatTime(time), message));
+            if (!to) {
+                $("ul#chat").append(newMessage(from, formatTime(time), message));
+                //console.log(to + ": !to");
+            }
+            else{
+                //console.log(to + ": to");
+                if (to.startsWith("@")) { //private chat
+                    //console.log(to + ": @to");
+                    //console.log(from + ": from");
+                    //console.log(target + ": target");
+                    if (to.slice(1) == email) {
+                        if (from === target.slice(1)){
+                            $("ul#chat").append(newMessage(from, formatTime(time), message));
+                        }
+                        else{
+                            //badge into user that send mess
+
+                            //console.log(from + "is different from: " + target.slice(1));
+                            //console.log($("a.user[href='#" + from + "']").find(".badge"));
+                            var newMessCount = $("a.user[href='#" + from + "'] > span.badge").html();
+                            //console.log("count: " + newMessCount);
+                            if (newMessCount === ""){
+                                //console.log("Current: 0");
+                                $("a.user[href='#" + from + "'] > span.badge").html("1");
+                                //console.log("Switch to: 1");
+                            }
+                            else{
+                                newMessCount = parseInt(newMessCount);
+                                //console.log("Current: " + newMessCount);
+                                newMessCount += 1;
+                                $("a.user[href='#" + from + "'] > span.badge").html(newMessCount.toString());
+                                //console.log("Switch to: " + newMessCount);
+                            }
+                        }
                     }
                 }
-            }
-            else { // group chat
-                if (target == currentTarget) {
-                    $("ul#chat").append(newMessage(from, formatTime(time), message));
-                }
-            }
+                else { // group chat
+                    console.log(to + ": *to");
+                    if (to == target) {
+                        $("ul#chat").append(newMessage(from, formatTime(time), message));
+                    }
+                    else{
+                        //badge into group that send mess
 
-            if (!target) {
-                $("ul#chat").append(newMessage(from, formatTime(time), message));
-                //return;
+                        //console.log(to + "is different from: " + target.slice(1));
+                        //console.log($("a.user[href='#" + to + "']").find(".badge"));
+                        newMessCount = $("a.channel[href='#" + to + "'] > span.badge").html();
+                        //console.log("count: " + newMessCount);
+                        if (newMessCount === ""){
+                            //console.log("Current: 0");
+                            $("a.channel[href='#" + to + "'] > span.badge").html("1");
+                            //console.log("Switch to: 1");
+                        }
+                        else{
+                            newMessCount = parseInt(newMessCount);
+                            //console.log("Current: " + newMessCount);
+                            newMessCount += 1;
+                            $("a.channel[href='#" + to + "'] > span.badge").html(newMessCount.toString());
+                            //console.log("Switch to: " + newMessCount);
+                        }
+                    }
+                }
             }
 
         });
@@ -230,7 +277,8 @@ $(document).ready(function () {
 
     // Load Private Message
     function getPrivateHistory(user) {
-        currentTarget = "@" + user;
+        target = "@" + user;
+        $("a.user[href='#" + user + "'] span").html("");
         $('.panel-heading h3').html("User " + user);
         $('form.send-message').attr("id", "@" + user);
         $("ul#chat").html("");
