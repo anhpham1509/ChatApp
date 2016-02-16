@@ -38,7 +38,7 @@ public class GroupResource {
     @RolesAllowed({"Admin","User"})
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public Set<Group> getGroups(@Context HttpServletRequest request){
+    public Set<Group> getJoinedGroups(@Context HttpServletRequest request){
         int user_idx =(int)request.getAttribute("useridx");
       
         return users.get(user_idx).getSubcriptions();
@@ -57,7 +57,7 @@ public class GroupResource {
     @GET
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public List<User> getUserGroup(@PathParam("param") String name){
+    public List<User> getGroupUsers(@PathParam("param") String name){
         List<User> members = new ArrayList<>();
         Group g = new Group();
         g.setName(name);

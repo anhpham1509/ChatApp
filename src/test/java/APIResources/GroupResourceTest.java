@@ -76,12 +76,12 @@ public class GroupResourceTest {
      * Test of getGroups method, of class GroupResource.
      */
     @Test
-    public void testGetGroups() {
-        System.out.println("getGroups");
+    public void testGetJoinedGroups() {
+        System.out.println("GetJoinedGroups");
         GroupResource instance = new GroupResource();
         request.setAttribute("useridx",users.size()-2);
         Set<Group> expResult = users.get(users.size()-2).getSubcriptions();
-        Set<Group> result = instance.getGroups(request);
+        Set<Group> result = instance.getJoinedGroups(request);
         assertEquals(expResult, result);
         
     }
@@ -103,15 +103,15 @@ public class GroupResourceTest {
      * Test of getGroup method, of class GroupResource.
      */
     //@Test
-    public void testGetGroup() {
-        System.out.println("getGroup");
+    public void testGetGroupUsers() {
+        System.out.println("GetGroupUsers");
         List<User> groupUsers= new ArrayList<>();
         groupUsers.add(users.get(users.size()-1));
         groupUsers.add(users.get(users.size()-2));
         String name = "test2";
         GroupResource instance = new GroupResource();
         List<User> expResult = groupUsers;
-        List<User> result = instance.getUserGroup(name);
+        List<User> result = instance.getGroupUsers(name);
         assertEquals(expResult, result);
  
     }
