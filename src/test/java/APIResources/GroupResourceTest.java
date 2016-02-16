@@ -125,38 +125,65 @@ public class GroupResourceTest {
         Group g = new Group();
         g.setName("test");
         GroupResource instance = new GroupResource();
-        Response expResult = Response.accepted().build();
+        Response expResult = Response.ok().build();
         Response result = instance.create(g);
         assertEquals(expResult.getStatus(), result.getStatus());
         
     }
+    @Test
+        public void testCreateInvalidGroup() {
+            System.out.println("CreateInvalidGroup");
+            Group g = new Group(" ");
+            System.out.println("Group name:"+g.getName());
+            GroupResource instance = new GroupResource();
+            Response expResult = Response.notAcceptable(null).build();
+            Response result = instance.create(g);
+            assertEquals(expResult.getStatus(), result.getStatus());
 
+        }
     /**
      * Test of join method, of class GroupResource.
      */
     @Test
     public void testJoin() {
         System.out.println("join");
-        Group g = new Group();
-        g.setName("test2");
+        Group g = new Group("test2");
         request.setAttribute("useridx",users.size()-2);
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok("ok").build();
         Response result = instance.join(g, request);
         assertEquals(expResult.getStatus(), result.getStatus());
     }
-
+    @Test
+    public void testJoinInvalidGroup() {
+        System.out.println("JoinInvalidGroup");
+        Group g = new Group(" ");
+        request.setAttribute("useridx",users.size()-2);
+        GroupResource instance = new GroupResource();
+        Response expResult = Response.notAcceptable(null).build();
+        Response result = instance.join(g, request);
+        assertEquals(expResult.getStatus(), result.getStatus());
+    }
     /**
      * Test of leave method, of class GroupResource.
      */
     @Test
     public void testLeave() {
         System.out.println("leave");
-        Group g = new Group();
-        g.setName("test2");
+        Group g = new Group("test2");
         request.setAttribute("useridx", users.size()-2);
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok("ok").build();
+        Response result = instance.leave(g, request);
+        assertEquals(expResult.getStatus(), result.getStatus());
+    }
+    @Test
+    public void testLeaveInvalidGroup() {
+        System.out.println("leave");
+        Group g = new Group(" ");
+        request.setAttribute("useridx", users.size()-2);
+        GroupResource instance = new GroupResource();
+        Response expResult = Response.notAcceptable(null).build();
         Response result = instance.leave(g, request);
         assertEquals(expResult.getStatus(), result.getStatus());
     }

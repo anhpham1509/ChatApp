@@ -117,14 +117,14 @@ public class ChatResource {
         }
         final User tUser = targetUser;
         originUser.getAsync().resume(e);
-        ex.submit(new Runnable() {
-            @Override
-            public void run() {
+     //   ex.submit(new Runnable() {
+      //      @Override
+      //      public void run() {
                     e.setTo("@" + email);
                     tUser.getAsync().resume(e);
                     
-            }
-        });
+        //    }
+       // });
 
         h.addEntry(e);
         h.save();
@@ -163,15 +163,14 @@ public class ChatResource {
             return Response.notAcceptable(null).build();
         }
         users.get(user_idx).getAsync().resume(e);
-        ex.submit(new Runnable() {
-            @Override
-            public void run() {
+//        ex.submit(new Runnable() {
+  //          @Override
+  //          public void run() {
                 for(User u:groupUser){
                     e.setTo(group_name);
                     u.getAsync().resume(e);
                 }
-            }
-        });
+   ////      });
 
         h.addEntry(e);
         h.save();

@@ -77,9 +77,12 @@ public class GroupResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response create(Group g){
+        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+          return Response.notAcceptable(null).build();
+        }
         groups.add(g);
         h.save();
-        return Response.accepted().build();
+        return Response.ok().build();
     }
     
     @RolesAllowed({"Admin","User"})
@@ -88,6 +91,9 @@ public class GroupResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response join(Group g,@Context HttpServletRequest request){
+        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+            return Response.notAcceptable(null).build();
+        }
         int useridx = (int)request.getAttribute("useridx");
         System.out.println(useridx);
         if(groups.contains(g)){
@@ -95,7 +101,7 @@ public class GroupResource {
             h.save();
             return Response.ok("ok").build();
         }
-        return Response.status(Status.NOT_ACCEPTABLE).build();
+        return Response.notAcceptable(null).build();
     }
     
     @RolesAllowed({"Admin","User"})
