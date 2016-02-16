@@ -66,34 +66,7 @@ public class ChatResource {
         users.get(user_idx).setAsync(asyncResp);
         //users.add(asyncResp);
     }
-
-    @PermitAll
-    @Path("/test")
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public List<HistoryEntry> test() {
-        /*  //users.add(asyncResp);
-       User u = new User();
-       u.setToken("98721yeh982qhfr");
-       u.setRole("admin");
-       u.setEmail("beochot@gmail.com");
-       User u2 = new User();
-       u2.setToken("98721yeh982qhfr213123");
-       u2.setRole("admin2");
-       u2.setEmail("beochot@gmail.com2");
-       Group g = new Group();
-       g.setName("PowerRanger");
-       g.addSubscribers(u);
-       g.addSubscribers(u2);
-       
-       HistoryEntry e1 = new HistoryEntry(u,g,"Daibac");
-       HistoryEntry e2 = new HistoryEntry(u,u2,"ga ga ga");
-       h.addEntry(e1);
-       h.addEntry(e2);
-         */
-        return h.getEntries();
-    }
-
+/*
     @RolesAllowed({"Admin", "User"})
     @POST
     @Consumes(MediaType.APPLICATION_XML)
@@ -115,7 +88,7 @@ public class ChatResource {
         });
         return Response.accepted().build();
     }
-
+*/
     @RolesAllowed({"Admin", "User"})
     @Path("/@{param}")
     @POST
@@ -123,31 +96,39 @@ public class ChatResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Response chatToPrivate(final HistoryEntry e, @PathParam("param") String targetPrivate, @Context HttpServletRequest request) {
         int user_idx = (int) request.getAttribute("useridx");
+        User originUser=users.get(user_idx);
+        if(targetPrivate.isEmpty()||targetPrivate.trim().isEmpty()||e.getMesssage().isEmpty()||e.getMesssage().trim().isEmpty()||e.getFrom().getEmail().isEmpty()||!e.getFrom().getEmail().equals(originUser.getEmail())){
+            return Response.notAcceptable(null).build();
+        }
+        
         System.out.println("in private chat");
         final String email = targetPrivate;
-        users.get(user_idx).getAsync().resume(e);
+        User targetUser = null;
+        Iterator<User> iterator = users.iterator();
+        while (iterator.hasNext()) {
+            User user = iterator.next();
+            if (user.getEmail().equals(email)) {
+                targetUser = user;
+                break;
+            }
+        }
+        if (targetUser == null) {
+            return Response.notAcceptable(null).build();
+        }
+        final User tUser = targetUser;
+        originUser.getAsync().resume(e);
         ex.submit(new Runnable() {
             @Override
             public void run() {
-                synchronized (users) {
-                    Iterator<User> iterator = users.iterator();
-                    while (iterator.hasNext()) {
-                        User user = iterator.next();
-
-                        if (user.getEmail().equals(email)) {
-                            e.setTo("@"+email);
-                            user.getAsync().resume(e);
-                            break;
-                        }
-                    }
-
-                }
+                    e.setTo("@" + email);
+                    tUser.getAsync().resume(e);
+                    
             }
         });
-        
+
         h.addEntry(e);
         h.save();
-        return Response.accepted().build();
+        return Response.ok().build();
     }
 
     @RolesAllowed({"Admin", "User"})
@@ -156,34 +137,44 @@ public class ChatResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response chatToGroup(final HistoryEntry e, @PathParam("param") String param, @Context HttpServletRequest request) {
-        System.out.println("in group chat");
         int user_idx = (int) request.getAttribute("useridx");
+        User originUser=users.get(user_idx);
+        if(param.isEmpty()||param.trim().isEmpty()||e.getMesssage().isEmpty()||e.getMesssage().trim().isEmpty()||e.getFrom().getEmail().isEmpty()||!e.getFrom().getEmail().equals(originUser.getEmail())){
+            return Response.notAcceptable(null).build();
+        }
+        System.out.println("in group chat");
+        final List<User> groupUser = new ArrayList<>();
+        
         final String group_name = param;
+        Iterator<User> iterator = users.iterator();
+        while (iterator.hasNext()) {
+            User user = iterator.next();
+            System.out.println(user.getEmail());
+            for (Group g : user.getSubcriptions()) {
+
+                if (g.getName().equals(group_name)) {
+                    System.out.println("Email user " + user.getEmail());
+                    groupUser.add(user);
+                    break;
+                }
+            }
+        }
+        if(groupUser.size()<1){
+            return Response.notAcceptable(null).build();
+        }
         users.get(user_idx).getAsync().resume(e);
         ex.submit(new Runnable() {
             @Override
             public void run() {
-                synchronized (users) {
-                    Iterator<User> iterator = users.iterator();
-                    while (iterator.hasNext()) {
-                        User user = iterator.next();
-                        System.out.println(user.getEmail());
-                        for (Group g : user.getSubcriptions()) {
-
-                            if (g.getName().equals(group_name)) {
-                                System.out.println("Email user " + user.getEmail());
-                                e.setTo(group_name);
-                                user.getAsync().resume(e);
-                                break;
-                            }
-                        }
-                    }
+                for(User u:groupUser){
+                    e.setTo(group_name);
+                    u.getAsync().resume(e);
                 }
             }
         });
-        
+
         h.addEntry(e);
         h.save();
-        return Response.accepted().build();
+        return Response.ok().build();
     }
 }

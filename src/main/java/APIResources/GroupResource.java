@@ -57,7 +57,7 @@ public class GroupResource {
     @GET
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public List<User> getGroup(@PathParam("param") String name){
+    public List<User> getUserGroup(@PathParam("param") String name){
         List<User> members = new ArrayList<>();
         Group g = new Group();
         g.setName(name);
@@ -93,7 +93,7 @@ public class GroupResource {
         if(groups.contains(g)){
             users.get(useridx).getSubcriptions().add(g);
             h.save();
-            return Response.accepted("ok").build();
+            return Response.ok("ok").build();
         }
         return Response.status(Status.NOT_ACCEPTABLE).build();
     }
@@ -104,12 +104,15 @@ public class GroupResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response leave(Group g,@Context HttpServletRequest request){
+        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+            return Response.notAcceptable(null).build();
+        }
         int useridx = (int)request.getAttribute("useridx");
         if(groups.contains(g)){
             users.get(useridx).getSubcriptions().remove(g);
-            return Response.accepted().build();
+            return Response.ok().build();
         }
-        return Response.status(Status.NOT_ACCEPTABLE).build();
+        return Response.notAcceptable(null).build();
     }
     
 }

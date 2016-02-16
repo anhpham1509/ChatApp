@@ -21,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -64,9 +65,13 @@ public class HistoryResource {
     public List<HistoryEntry> getGroupHistory(@PathParam("param") String groupName, @Context HttpServletRequest request) {
         System.out.println("in group");
         List<HistoryEntry> history = new ArrayList<>();
+        int user_idx = (int) request.getAttribute("useridx");
+        if(groupName.isEmpty()||groupName.trim().isEmpty()||!users.get(user_idx).getSubcriptions().contains(new Group(groupName))){
+             return history;
+        }
+        
         final String group_name = groupName;
-        /*Group g = new Group();
-            g.setName(group_name);*/
+
         for (HistoryEntry e : h.getEntries()) {
             if (!e.getTo().startsWith("@") && (e.getTo()).equals(group_name)) {
                 history.add(e);

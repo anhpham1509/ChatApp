@@ -1,0 +1,164 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package APIResources;
+
+import Model.Group;
+import Model.History;
+import Model.HistoryEntry;
+import Model.User;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author beochot
+ */
+public class GroupResourceTest {
+    private History h=History.getInstance();
+    private List<User> users = h.getUsers();
+    private List<HistoryEntry> entries=h.getEntries();
+    @Context
+    private HttpServletRequest request = new TestHttpServletRequest();
+    public GroupResourceTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+        System.out.println("Entries size:"+entries.size());
+        User u = new User("beochot@gmail.com","1234","user");
+        u.setAsync(new TestAsyncResponse());
+        User u2 =new User("beochot2@gmail.com","1234","user");
+        u2.setAsync(new TestAsyncResponse());
+        Group g = new Group();
+        g.setName("test2");
+        Group g2 = new Group();
+        g2.setName("test3");
+        h.getGroups().remove(g);
+        h.getGroups().remove(g2);
+        u.getSubcriptions().add(g);
+        u.getSubcriptions().add(g2);
+        u2.getSubcriptions().add(g);
+        u2.getSubcriptions().add(g2);
+        users.remove(u);
+        users.remove(u2);
+        users.add(u);
+        users.add(u2);
+        h.getGroups().add(g);
+        h.getGroups().add(g2);
+    }
+    
+    @After
+    public void tearDown() {
+    }
+
+    /**
+     * Test of getGroups method, of class GroupResource.
+     */
+    @Test
+    public void testGetGroups() {
+        System.out.println("getGroups");
+        GroupResource instance = new GroupResource();
+        request.setAttribute("useridx",users.size()-2);
+        Set<Group> expResult = users.get(users.size()-2).getSubcriptions();
+        Set<Group> result = instance.getGroups(request);
+        assertEquals(expResult, result);
+        
+    }
+
+    /**
+     * Test of getAllGroups method, of class GroupResource.
+     */
+    @Test
+    public void testGetAllGroups() {
+        System.out.println("getAllGroups");
+        GroupResource instance = new GroupResource();
+        Set<Group> expResult = h.getGroups();
+        Set<Group> result = instance.getAllGroups();
+        assertEquals(expResult, result);
+
+    }
+
+    /**
+     * Test of getGroup method, of class GroupResource.
+     */
+    //@Test
+    public void testGetGroup() {
+        System.out.println("getGroup");
+        List<User> groupUsers= new ArrayList<>();
+        groupUsers.add(users.get(users.size()-1));
+        groupUsers.add(users.get(users.size()-2));
+        String name = "test2";
+        GroupResource instance = new GroupResource();
+        List<User> expResult = groupUsers;
+        List<User> result = instance.getUserGroup(name);
+        assertEquals(expResult, result);
+ 
+    }
+
+    /**
+     * Test of create method, of class GroupResource.
+     */
+    @Test
+    public void testCreate() {
+        System.out.println("create");
+        Group g = new Group();
+        g.setName("test");
+        GroupResource instance = new GroupResource();
+        Response expResult = Response.accepted().build();
+        Response result = instance.create(g);
+        assertEquals(expResult.getStatus(), result.getStatus());
+        
+    }
+
+    /**
+     * Test of join method, of class GroupResource.
+     */
+    @Test
+    public void testJoin() {
+        System.out.println("join");
+        Group g = new Group();
+        g.setName("test2");
+        request.setAttribute("useridx",users.size()-2);
+        GroupResource instance = new GroupResource();
+        Response expResult = Response.ok("ok").build();
+        Response result = instance.join(g, request);
+        assertEquals(expResult.getStatus(), result.getStatus());
+    }
+
+    /**
+     * Test of leave method, of class GroupResource.
+     */
+    @Test
+    public void testLeave() {
+        System.out.println("leave");
+        Group g = new Group();
+        g.setName("test2");
+        request.setAttribute("useridx", users.size()-2);
+        GroupResource instance = new GroupResource();
+        Response expResult = Response.ok("ok").build();
+        Response result = instance.leave(g, request);
+        assertEquals(expResult.getStatus(), result.getStatus());
+    }
+    
+}
