@@ -5,12 +5,14 @@
  */
 package APIResources;
 
+import Model.HistoryEntry;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.TimeoutHandler;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -20,6 +22,7 @@ public class TestAsyncResponse implements AsyncResponse{
 
     @Override
     public boolean resume(Object response) {
+        assertTrue(response instanceof HistoryEntry);
         System.out.println("Resume");
         return true;
     }
