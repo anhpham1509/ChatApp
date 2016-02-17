@@ -93,6 +93,10 @@ public class AuthResourceTest {
         assertEquals(resultDuplicated.getStatus(), 406);
         h.getUsers().remove(user);
         h.save();
+        
+        // Negative test: wrong params
+        Response resultNegativeWrongParams = instance.register("  ", "");
+        assertEquals(resultNegativeWrongParams.getStatus(), 406);
     }
     
     
@@ -120,6 +124,10 @@ public class AuthResourceTest {
         assertEquals(resultNegative.getStatus(), 406);
         h.getUsers().remove(user);
         h.save();
+        
+        // Negative test: wrong params
+        Response resultNegativeWrongParams = instance.login("  ", "");
+        assertEquals(resultNegativeWrongParams.getStatus(), 406);
     }
 
     /**

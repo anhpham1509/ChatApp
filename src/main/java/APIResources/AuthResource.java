@@ -66,6 +66,9 @@ public class AuthResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_XML)
     public Response register(@FormParam("email") String email, @FormParam("password") String password) {
+        if(email.trim().isEmpty() || password.trim().isEmpty()){
+            return Response.status(Status.NOT_ACCEPTABLE).build();
+        }
         User u = new User();
         u.setEmail(email);
         u.setPassword(password);
@@ -86,6 +89,9 @@ public class AuthResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
     public Response login(@FormParam("email") String email, @FormParam("password") String password) {
+        if(email.trim().isEmpty() || password.trim().isEmpty()){
+            return Response.status(Status.NOT_ACCEPTABLE).build();
+        }
         for (User user : h.getUsers()) {
             if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
                 return Response.ok(user.getToken()).build();
