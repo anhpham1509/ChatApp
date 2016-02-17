@@ -48,7 +48,7 @@ $(document).ready(function () {
     });
 
     $('#sign-up-btn').click(function (e) {
-        //e.preventDefault();
+        e.preventDefault();
 
         $(this).find('input[type="text"], input[type="password"]').each(function () {
             if ($(this).val() == "") {

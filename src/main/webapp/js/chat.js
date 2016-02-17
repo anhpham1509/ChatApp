@@ -10,10 +10,12 @@ $(document).ready(function () {
     //Insert Username
     $('#username').html(email);
 
-    feedMessage();
     listJoinedGroups();
     listAllUsers();
-    addChannel();
+    feedMessage();
+
+    // Hide post mess
+    $('.send-message').hide();
 
     // Polling messages
     function feedMessage() {
@@ -81,6 +83,7 @@ $(document).ready(function () {
     // List all joined groups in ul
     function updateGroup(data) {
         $("ul#channels").html(" ");
+        joinedGroups = [];
         $(data).find("name").each(function () {
             joinedGroups.push(this.innerHTML);
             $("ul#channels").append("<li><a href='#" + this.innerHTML + "' class='channel'>" + this.innerHTML + " <span class='badge'></span></a></li>");
@@ -113,6 +116,7 @@ $(document).ready(function () {
     // Show ALL Groups
     function listAllGroup() {
         callAjax("/ChatApp/app/group/all", "GET", null, "application/xml", updateAllGroup);
+        addChannel();
     }
 
     // List all group to JOIN in ul
@@ -163,11 +167,29 @@ $(document).ready(function () {
             //console.log($(this).attr("href").slice(5));
             joinGroup($(this).attr("href").slice(5));
         });
+
+        // Join channel Event listener
+        $('.leave-channel').click(function () {
+            //AJAX join
+            //console.log($(this).attr("href").slice(5));
+            leaveGroup($(this).attr("href").slice(5));
+        });
     }
 
     // Join group
     function joinGroup(group) {
         callAjax("/ChatApp/app/group/join/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
+            function () {
+                // Add group created as joined in ul
+                //$("<li><a href='#" + group + "' class='channel'>" + group + "</a></li>").insertBefore("ul#channels li:last-child");
+                //clickEvent('channel', getGroupHistory);
+                listJoinedGroups();
+            });
+    }
+
+    // Leave group
+    function leaveGroup(group) {
+        callAjax("/ChatApp/app/group/leave/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
             function () {
                 // Add group created as joined in ul
                 //$("<li><a href='#" + group + "' class='channel'>" + group + "</a></li>").insertBefore("ul#channels li:last-child");
@@ -189,6 +211,7 @@ $(document).ready(function () {
 
     // Add messages in to chat div
     function updateHistory(data) {
+        $('.send-message').show();
         $(data).find("historyEntry").each(function (n) {
             var message = $(this).find("messsage").text();
             var email = $(this).find("email").text();
@@ -244,7 +267,7 @@ $(document).ready(function () {
                     }
                 }
                 else { // group chat
-                    console.log(to + ": *to");
+                    //console.log(to + ": *to");
                     if (to == target) {
                         $("ul#chat").append(newMessage(from, formatTime(time), message));
                     }
@@ -287,14 +310,33 @@ $(document).ready(function () {
 
     // Format time to display
     function formatTime(time) {
-        return time.getDate() + "/" + time.getMonth() + ", " + time.getHours().toString() + ":" + time.getMinutes().toString();
+        var today = new Date();
+        var date = time.getDate();
+        var month = parseInt(time.getMonth()) + 1;
+
+        if (today.getDate() !== date){
+            return formatDigits(date) + "/" + formatDigits(month);
+        }
+        else{
+            return formatDigits(time.getHours()) + ":" + formatDigits(time.getMinutes().toString());
+        }
+    }
+
+    // Format 2 digits
+    function formatDigits(number){
+        if (number < 9){
+            return "0" + number.toString();
+        }
+        else{
+            return number.toString();
+        }
     }
 
     // Prepare li to add into chat div
     function newMessage(email, time, message) {
         return "<li class='left clearfix'>\
                 <span class='chat-img pull-left'>\
-                    <img src='http://placehold.it/50/029E1E/fff&text=" + email[0].toUpperCase() + "' alt='" + email + "' class='img-circle'/>\
+                    <img src='/ChatApp/img/usr/" + email[0].toUpperCase() + ".png' alt='" + email + "' class='img-circle'/>\
                 </span>\
                 \
                 <div class='chat-body clearfix'>\
