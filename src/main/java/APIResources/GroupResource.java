@@ -38,7 +38,7 @@ public class GroupResource {
     @RolesAllowed({"Admin","User"})
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public Set<Group> getGroups(@Context HttpServletRequest request){
+    public Set<Group> getJoinedGroups(@Context HttpServletRequest request){
         int user_idx =(int)request.getAttribute("useridx");
       
         return users.get(user_idx).getSubcriptions();
@@ -57,17 +57,14 @@ public class GroupResource {
     @GET
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public List<User> getGroup(@PathParam("param") String name){
+    public List<User> getGroupUsers(@PathParam("param") String name){
         List<User> members = new ArrayList<>();
-        Group g = new Group();
-        g.setName(name);
-
+        Group g = new Group(name);
             for(User u:users){
                 if(u.getSubcriptions().contains(g)){
                     members.add(u);
                 }
             }
-        
         return members;
     }
     
@@ -77,9 +74,12 @@ public class GroupResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response create(Group g){
+        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+          return Response.notAcceptable(null).build();
+        }
         groups.add(g);
         h.save();
-        return Response.accepted().build();
+        return Response.ok().build();
     }
     
     @RolesAllowed({"Admin","User"})
@@ -88,28 +88,33 @@ public class GroupResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response join(Group g,@Context HttpServletRequest request){
+        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+            return Response.notAcceptable(null).build();
+        }
         int useridx = (int)request.getAttribute("useridx");
         System.out.println(useridx);
         if(groups.contains(g)){
             users.get(useridx).getSubcriptions().add(g);
             h.save();
-            return Response.accepted("ok").build();
+            return Response.ok("ok").build();
         }
-        return Response.status(Status.NOT_ACCEPTABLE).build();
+        return Response.notAcceptable(null).build();
     }
-    
     @RolesAllowed({"Admin","User"})
     @Path("/leave")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
     public Response leave(Group g,@Context HttpServletRequest request){
+        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+            return Response.notAcceptable(null).build();
+        }
         int useridx = (int)request.getAttribute("useridx");
         if(groups.contains(g)){
             users.get(useridx).getSubcriptions().remove(g);
-            return Response.accepted().build();
+            return Response.ok().build();
         }
-        return Response.status(Status.NOT_ACCEPTABLE).build();
+        return Response.notAcceptable(null).build();
     }
     
 }

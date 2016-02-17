@@ -25,6 +25,10 @@ public class Group extends Messageable implements Serializable{
       //  subscribers=new ArrayList<>();
     }
 
+    public Group(String name) {
+        this.name = name;
+    }
+    
     public String getName() {
         return name;
     }
