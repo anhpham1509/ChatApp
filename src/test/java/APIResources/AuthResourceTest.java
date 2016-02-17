@@ -64,6 +64,12 @@ public class AuthResourceTest {
     public void tearDown() {
     }
 
+    @org.junit.Test
+    public void testGetUri(){
+        AuthResource instance = new AuthResource();
+        instance.setContext(mockContext);
+        assertEquals(instance.getContext(), mockContext);
+    }
     /**
      * Test of register method, of class AuthResource.
      */
