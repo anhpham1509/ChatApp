@@ -102,12 +102,12 @@ public class GroupResourceTest {
     /**
      * Test of getGroup method, of class GroupResource.
      */
-    //@Test
+    @Test
     public void testGetGroupUsers() {
         System.out.println("GetGroupUsers");
         List<User> groupUsers= new ArrayList<>();
-        groupUsers.add(users.get(users.size()-1));
         groupUsers.add(users.get(users.size()-2));
+        groupUsers.add(users.get(users.size()-1));
         String name = "test2";
         GroupResource instance = new GroupResource();
         List<User> expResult = groupUsers;
@@ -164,6 +164,16 @@ public class GroupResourceTest {
         Response result = instance.join(g, request);
         assertEquals(expResult.getStatus(), result.getStatus());
     }
+    @Test
+    public void testJoinUnexistGroup() {
+        System.out.println("JoinUnexistGroup");
+        Group g = new Group("214wefaetg2");
+        request.setAttribute("useridx",users.size()-2);
+        GroupResource instance = new GroupResource();
+        Response expResult = Response.notAcceptable(null).build();
+        Response result = instance.join(g, request);
+        assertEquals(expResult.getStatus(), result.getStatus());
+    }
     /**
      * Test of leave method, of class GroupResource.
      */
@@ -187,5 +197,14 @@ public class GroupResourceTest {
         Response result = instance.leave(g, request);
         assertEquals(expResult.getStatus(), result.getStatus());
     }
-    
+    @Test
+    public void testLeaveUnexistGroup() {
+        System.out.println("leave");
+        Group g = new Group("fqwetg234tgwser");
+        request.setAttribute("useridx", users.size()-2);
+        GroupResource instance = new GroupResource();
+        Response expResult = Response.notAcceptable(null).build();
+        Response result = instance.leave(g, request);
+        assertEquals(expResult.getStatus(), result.getStatus());
+    }
 }

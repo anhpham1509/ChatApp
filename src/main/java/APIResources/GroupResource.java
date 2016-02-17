@@ -59,15 +59,12 @@ public class GroupResource {
     @Produces(MediaType.TEXT_PLAIN)
     public List<User> getGroupUsers(@PathParam("param") String name){
         List<User> members = new ArrayList<>();
-        Group g = new Group();
-        g.setName(name);
-
+        Group g = new Group(name);
             for(User u:users){
                 if(u.getSubcriptions().contains(g)){
                     members.add(u);
                 }
             }
-        
         return members;
     }
     
@@ -103,7 +100,6 @@ public class GroupResource {
         }
         return Response.notAcceptable(null).build();
     }
-    
     @RolesAllowed({"Admin","User"})
     @Path("/leave")
     @POST
