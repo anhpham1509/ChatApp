@@ -100,14 +100,6 @@ public class AuthResource {
         return Response.status(Status.NOT_ACCEPTABLE).build();
     }
 
-    @PermitAll
-    @Path("/get")
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public List<User> get() {
-
-        return h.getUsers();
-    }
 
     @Path("/verify")
     @GET

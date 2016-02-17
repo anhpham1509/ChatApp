@@ -130,17 +130,6 @@ public class AuthResourceTest {
         assertEquals(resultNegativeWrongParams.getStatus(), 406);
     }
 
-    /**
-     * Test of get method, of class AuthResource.
-     */
-    @org.junit.Test
-    public void testGet() {
-        System.out.println("get");
-        AuthResource instance = new AuthResource();
-        List<User> expResult = h.getUsers();
-        List<User> result = instance.get();
-        assertEquals(expResult, result);
-    }
 
     /**
      * Test of verifyAuth method, of class AuthResource.
