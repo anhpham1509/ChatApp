@@ -67,10 +67,10 @@ public class History implements Serializable{
     public Set<Group> getGroups() {
         return groups;
     }
-    public void addGroup(Group g) {
+ /*   public void addGroup(Group g) {
         this.groups.add(g);
     }
-
+*/
   
     private synchronized void restore() {
         try {

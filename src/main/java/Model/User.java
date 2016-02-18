@@ -31,6 +31,13 @@ public class User extends Messageable implements Serializable{
         subcriptions=new HashSet<>();
     }
 
+    public User(String email, String password, String role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        subcriptions=new HashSet<>();
+    }
+
 
     public String getEmail() {
         return email;

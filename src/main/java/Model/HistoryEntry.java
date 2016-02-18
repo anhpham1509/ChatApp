@@ -7,6 +7,7 @@ package Model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -63,5 +64,5 @@ public class HistoryEntry implements Serializable{
     public void setTo(String to) {
         this.to = to;
     }
-    
+
 }
