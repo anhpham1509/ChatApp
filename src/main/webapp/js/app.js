@@ -22,7 +22,7 @@ $(document).ready(function () {
             url: "/ChatApp/app/auth/test",
             method: "GET",
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", + window.globalToken);
+                xhr.setRequestHeader("Authorization", window.globalToken);
             },
             success: function (result) {
                 alert(result);
@@ -32,8 +32,38 @@ $(document).ready(function () {
             }
         });
     });
+    
+    $("#uploadImage").submit(function(evt){
+        console.log("in");
+        evt.preventDefault();
+        var file = $('input[name="file"]').get(0).files[0];
+        var formData = new FormData(this);
+        formData.append('file', file);
+        $.ajax({
+            type:'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
+            url: $(this).attr('action'),
+            data:formData,
+            cache:false,
+            contentType: false,
+            processData: false,
+            success:function(data){
+                console.log("success");
+                console.log(data);
+                setImage(data);
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+            }
+        });
+    });
 });
-
+function setImage(fileName){
+    $("#uploadedImage").attr("src","./images/"+fileName);
+}
 
 function getToken() {
     var path = window.location.search;
