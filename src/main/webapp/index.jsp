@@ -29,6 +29,13 @@
                     <input type="text" class="input-block-level" placeholder="Your message..." id="message" style="height:60px; width:100%"/>
                     <input type="submit" class="btn btn-large btn-block btn-primary" name="sendMessage"
                            value="Send message" onclick="normalChat()"/>
+                    <div class="container">
+                        <form id="uploadImage" action="app/chat/image" method="post" enctype="multipart/form-data" onsubmit="sendImage()">
+                            Select an image:
+                            <input type="file" name="file" size="50" style="display:inline-block"/>
+                            <input type="submit" value="Upload it"/>
+                        </form>
+                    </div>
                     <button class="btn btn-large btn-block" type="button" id="leave-room">Leave
                         room</button>
                 </div>
@@ -83,13 +90,6 @@
         </div>
         <div class="container">
             <button id="authTest">Secured REST resource</button>
-        </div>
-        <div class="container">
-            <h1>Upload a file</h1>
-            <form id="uploadImage" action="app/chat/image" method="post" enctype="multipart/form-data" onsubmit="sendImage()">
-                Select a file: <input type="file" name="file" size="50"/>
-                <input type="submit" value="Upload it"/>
-            </form>
         </div>
     </body>
 </html>
