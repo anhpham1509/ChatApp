@@ -7,6 +7,7 @@ package Config;
 
 import AuthConfig.AuthenticationFilter;
 import javax.ws.rs.ApplicationPath;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -19,5 +20,6 @@ public class ApplicationConfig extends ResourceConfig {
     public ApplicationConfig() {
         packages("APIResources");
         register(AuthenticationFilter.class);
+        register(MultiPartFeature.class);
     }
 }
