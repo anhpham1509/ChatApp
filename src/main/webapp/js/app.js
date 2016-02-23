@@ -32,37 +32,47 @@ $(document).ready(function () {
             }
         });
     });
-    
-    $("#uploadImage").submit(function(evt){
-        console.log("in");
-        evt.preventDefault();
-        var file = $('input[name="file"]').get(0).files[0];
-        var formData = new FormData(this);
-        formData.append('file', file);
-        $.ajax({
-            type:'POST',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", token);
-            },
-            url: $(this).attr('action'),
-            data:formData,
-            cache:false,
-            contentType: false,
-            processData: false,
-            success:function(data){
-                console.log("success");
-                console.log(data);
-                setImage(data);
-            },
-            error: function(data){
-                console.log("error");
-                console.log(data);
-            }
-        });
-    });
 });
-function setImage(fileName){
-    $("#uploadedImage").attr("src","./images/"+fileName);
+
+function sendImage() {
+    var sendingUrl;
+    console.log("in" + inChatWith);
+    event.preventDefault();
+    if (!inChatWith) {
+        return;
+    }
+    if (inChatWith.startsWith("@")) {
+        sendingUrl = "/ChatApp/app/chat/image/@" + $("select[name=userlist]").val();
+    } else {
+        sendingUrl = "/ChatApp/app/chat/image/" + $("select[name=joinedgrouplist]").val();
+    }
+    var file = $('input[name="file"]').get(0).files[0];
+    var formData = new FormData();
+    formData.append('file', file);
+    $.ajax({
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", token);
+        },
+        url: sendingUrl,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+            console.log("success");
+            console.log(data);
+        },
+        error: function (data) {
+            console.log("error");
+            console.log(data);
+        }
+    });
+
+}
+
+function setImage(fileName) {
+    $("#uploadedImage").attr("src", "./images/" + fileName);
 }
 
 function getToken() {
@@ -80,34 +90,36 @@ function getToken() {
     }
 }
 
-function normalChat() {
-    var xml = composeMessage();
-    console.log(xml);
-
-    $.ajax({
-        url: '/ChatApp/app/chat',
-        method: "POST",
-        contentType: "application/xml",
-        data: xml,
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Authorization", token);
-        },
-        success: function (result) {
-        }
-    });
-}
+//function normalChat() {
+//    var xml = composeMessage();
+//    console.log(xml);
+//
+//    $.ajax({
+//        url: '/ChatApp/app/chat',
+//        method: "POST",
+//        contentType: "application/xml",
+//        data: xml,
+//        beforeSend: function (xhr) {
+//            xhr.setRequestHeader("Authorization", token);
+//        },
+//        success: function (result) {
+//        }
+//    });
+//}
 
 function toGroupChat() {
     $("#response").html(" ");
     $("input[name=sendMessage]").val("Send Group Message").attr('onclick', '').unbind().click(groupChat);
     inChatWith = $("select[name=joinedgrouplist]").val();
+    console.log(inChatWith);
     // get history for group chat
     doAction("/ChatApp/app/history/" + $("select[name=joinedgrouplist]").val(), "GET", null, "application/xml", updateHistory);
 }
 function toSingleChat() {
     $("#response").html(" ");
     $("input[name=sendMessage]").val("Send Private Message").attr('onclick', '').unbind().click(singleChat);
-    inChatWith = $("select[name=userlist]").val();;
+    inChatWith = "@" + $("select[name=userlist]").val();
+    console.log(inChatWith);
     // get history for private chat
     doAction("/ChatApp/app/history/@" + $("select[name=userlist]").val(), "GET", null, "application/xml", updateHistory);
 }
@@ -196,41 +208,85 @@ function updateHistory(data) {
         var message = $(this).find("messsage").text();
         var email = $(this).find("from").text();
         var time = new Date($(this).find("time").text());
-        $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
+        var filePath = $(this).find("filePath").text();
+        var fileType = $(this).find("fileType").text();
+        if (!fileType) {
+            $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
+        } else {
+            switch (fileType) {
+                case "image":
+                    $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " uploaded : " + "<img src='images/" + filePath + "'/></td></tr>");
+                    break;
+                default:
+
+            }
+        }
     });
 }
 function handleNewMessage(data) {
     console.log(data);
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
-        var email = $(this).find("from").text();
+        var from = $(this).find("from").text();
         var time = new Date($(this).find("time").text());
         var target = $(this).find("to").text();
-        onMessageSuccess(email, message, time, target);
+        var filePath = $(this).find("filePath").text();
+        var fileType = $(this).find("fileType").text();
+        if (fileType === 'image') {
+            onImageSuccess(from, message, time, target, filePath, fileType);
+        } else {
+            onMessageSuccess(from, message, time, target);
+        }
     });
 }
-function onMessageSuccess(email, message, time, target) {
-    // for sender display
-    if(!target){
-        $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
+
+function onImageSuccess(from, message, time, target, filePath, fileType) {
+    console.log(arguments);
+    if (fileType !== "image") {
         return;
     }
-    console.log("in chat with: "+ inChatWith);
+
+    if(!target){
+        $("#response").append('<tr><td class="received">' + time.toString() + " : " + from + " uploaded : " + "<img src='images/" + filePath + "'/></td></tr>");
+    }
     
     // in group chat
-    if(!target.startsWith("@")){
-        if(target !== inChatWith){
+    if (!target.startsWith("@")) {
+        if (target !== inChatWith) {
             return;
         }
     }
-    
+
     // in private chat
-    if(target.startsWith("@")){
-        if(email !== inChatWith){
+    if (target.startsWith("@")) {
+        if (from !== inChatWith.slice(1)) {
             return;
         }
     }
-    $("#response").append('<tr><td class="received">' + time.toString() + " : " + email + " said : " + message + '</td></tr>');
+
+    $("#response").append('<tr><td class="received">' + time.toString() + " : " + from + " uploaded : " + "<img src='images/" + filePath + "'/></td></tr>");
+}
+
+function onMessageSuccess(from, message, time, target) {
+    console.log("in chat with: " + inChatWith + from + target);
+    if(!target){
+        $("#response").append('<tr><td class="received">' + time.toString() + " : " + from + " said : " + message + '</td></tr>');
+    }
+
+    // in group chat
+    if (!target.startsWith("@")) {
+        if (target !== inChatWith) {
+            return;
+        }
+    }
+
+    // in private chat
+    if (target.startsWith("@")) {
+        if (from !== inChatWith.slice(1)) {
+            return;
+        }
+    }
+    $("#response").append('<tr><td class="received">' + time.toString() + " : " + from + " said : " + message + '</td></tr>');
 }
 function doAction(url, method, data, contentType, callback) {
     $.ajax({

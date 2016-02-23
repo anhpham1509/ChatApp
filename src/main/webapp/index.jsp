@@ -86,11 +86,10 @@
         </div>
         <div class="container">
             <h1>Upload a file</h1>
-            <form id="uploadImage" action="app/chat/image" method="post" enctype="multipart/form-data">
+            <form id="uploadImage" action="app/chat/image" method="post" enctype="multipart/form-data" onsubmit="sendImage()">
                 Select a file: <input type="file" name="file" size="50"/>
                 <input type="submit" value="Upload it"/>
             </form>
         </div>
-        <img id="uploadedImage" src=""/>
     </body>
 </html>

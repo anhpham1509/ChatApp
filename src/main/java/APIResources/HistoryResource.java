@@ -47,6 +47,7 @@ public class HistoryResource {
         
         // getting entries needed
         for (HistoryEntry e : h.getEntries()) {
+            System.out.println(e);
             String sender = e.getTo();
             String receiver = e.getFrom().getEmail();
             if ((sender.startsWith("@")) && sender.replaceFirst("@","").equals(fromEmail) && receiver.equals(toEmail)
