@@ -23,11 +23,10 @@ import java.util.Set;
  * @author beochot
  */
 public class History implements Serializable{
-//volatile
+
     private static History instance = null;
     private List<HistoryEntry> entries;
-    private List<HistoryEntry> groupEntries;
-    private List<HistoryEntry> broadcastEntries;
+
     private List<User> users;
     private Set<Group> groups;
     private History() {

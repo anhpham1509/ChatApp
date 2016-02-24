@@ -79,7 +79,7 @@ public class ChatResource {
         users.get(user_idx).setAsync(asyncResp);
         //users.add(asyncResp);
     }
-
+/*
     @RolesAllowed({"Admin"})
     @POST
     @Consumes(MediaType.APPLICATION_XML)
@@ -95,7 +95,7 @@ public class ChatResource {
 
         return Response.accepted().build();
     }
-
+*/
     @RolesAllowed({"Admin", "User"})
     @Path("/@{param}")
     @POST
