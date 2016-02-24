@@ -79,38 +79,49 @@ public class GroupResource {
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response create(Group g){
+    public Response create(@Context HttpServletRequest request,Group g){
+        int user_idx =(int)request.getAttribute("useridx");
+        User currentUser = users.get(user_idx);
+        
         if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
           return Response.notAcceptable(null).build();
         }
         groups.add(g);
+        currentUser.getSubcriptions().add(g);
         h.save();
         return Response.ok().build();
+    
     }
-    @RolesAllowed("Admin")
+    @RolesAllowed({"Admin","User"})
     @Path("/createPrivate")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response createPrivateGroup(Group g){
+    public Response createPrivateGroup(@Context HttpServletRequest request,Group g){
+        int user_idx =(int)request.getAttribute("useridx");
+        User currentUser = users.get(user_idx);
         if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
           return Response.notAcceptable(null).build();
         }
         g.setPrivate(true);
         if(groups.add(g)){
+            currentUser.getSubcriptions().add(g);
             h.save();
         return Response.ok().build();
         }
         return Response.notAcceptable(null).build();
     }
-    @RolesAllowed("Admin")
+    @RolesAllowed({"Admin","User"})
     @Path("/addUser/{param}")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response addUsertoGroup(@PathParam("param") String groupName,List<User> invitedUsers){
+    public Response addUsertoGroup(@Context HttpServletRequest request,@PathParam("param") String groupName,List<User> invitedUsers){
         Group g = new Group(groupName);
-        if(groupName.isEmpty()||groupName.trim().isEmpty()||users.isEmpty()||!groups.contains(g)){
+        int user_idx =(int)request.getAttribute("useridx");
+        User currentUser = users.get(user_idx);
+        
+        if(groupName.isEmpty()||groupName.trim().isEmpty()||users.isEmpty()||(!groups.contains(g))||(!currentUser.getSubcriptions().contains(g))){
           return Response.notAcceptable(null).build();
         }
         for(User invitedUser:invitedUsers){

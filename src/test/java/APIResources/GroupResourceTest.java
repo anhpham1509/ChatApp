@@ -125,9 +125,10 @@ public class GroupResourceTest {
         System.out.println("create");
         Group g = new Group();
         g.setName("test");
+        request.setAttribute("useridx",users.size()-2);
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok().build();
-        Response result = instance.create(g);
+        Response result = instance.create(request,g);
         assertEquals(expResult.getStatus(), result.getStatus());
         
     }
@@ -135,10 +136,11 @@ public class GroupResourceTest {
         public void testCreateInvalidGroup() {
             System.out.println("CreateInvalidGroup");
             Group g = new Group(" ");
+            request.setAttribute("useridx",users.size()-2);
             System.out.println("Group name:"+g.getName());
             GroupResource instance = new GroupResource();
             Response expResult = Response.notAcceptable(null).build();
-            Response result = instance.create(g);
+            Response result = instance.create(request,g);
             assertEquals(expResult.getStatus(), result.getStatus());
 
         }
