@@ -219,7 +219,7 @@ function updateHistory(data) {
     console.log(data);
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
-        var email = $(this).find("from").text();
+        var email = $(this).find("origin").text();
         var time = new Date($(this).find("time").text());
         var filePath = $(this).find("filePath").text();
         var fileType = $(this).find("fileType").text();
@@ -240,9 +240,9 @@ function handleNewMessage(data) {
     console.log(data);
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
-        var from = $(this).find("from").text();
+        var from = $(this).find("origin").text();
         var time = new Date($(this).find("time").text());
-        var target = $(this).find("to").text();
+        var target = $(this).find("target").text();
         var filePath = $(this).find("filePath").text();
         var fileType = $(this).find("fileType").text();
         if (fileType === 'image') {
@@ -316,7 +316,7 @@ function doAction(url, method, data, contentType, callback) {
     });
 }
 function composeMessage() {
-    return '<historyEntry><from><email>' + email + '</email></from><messsage>' + $("#message").val() + '</messsage><time>null</time></historyEntry>';
+    return '<historyEntry><origin><email>' + email + '</email></origin><messsage>' + $("#message").val() + '</messsage><time>null</time></historyEntry>';
     //"<historyEntry><from><email>lucky7</email></from><messsage>ga ga g222asda</messsage><time>null</time></historyEntry>";
 
 }
