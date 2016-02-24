@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author beochot
  */
 @XmlRootElement
-public class User extends Messageable implements Serializable{
+public class User implements Serializable{
     private String email;
     private String password;
     private String role;
@@ -109,7 +109,7 @@ public class User extends Messageable implements Serializable{
     public int hashCode() {
         int hash = 5;
         hash = 23 * hash + Objects.hashCode(this.email);
-        hash = 23 * hash + Objects.hashCode(this.role);
+       // hash = 23 * hash + Objects.hashCode(this.role);
         return hash;
     }
 

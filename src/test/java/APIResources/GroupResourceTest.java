@@ -105,13 +105,14 @@ public class GroupResourceTest {
     @Test
     public void testGetGroupUsers() {
         System.out.println("GetGroupUsers");
+        request.setAttribute("useridx",users.size()-2);
         List<User> groupUsers= new ArrayList<>();
         groupUsers.add(users.get(users.size()-2));
         groupUsers.add(users.get(users.size()-1));
         String name = "test2";
         GroupResource instance = new GroupResource();
         List<User> expResult = groupUsers;
-        List<User> result = instance.getGroupUsers(name);
+        List<User> result = instance.getGroupUsers(request,name);
         assertEquals(expResult, result);
  
     }

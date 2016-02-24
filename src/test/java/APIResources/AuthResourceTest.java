@@ -114,10 +114,11 @@ public class AuthResourceTest {
         user.setEmail(email);
         user.setRole("User");
         AuthResource instance = new AuthResource();
-        String expToken = DigestUtils.shaHex(email+"vietnamvodich");
-        Response result = instance.register(email, password);
+        //String expToken = DigestUtils.shaHex(email+"vietnamvodich");
+        instance.register(email, password);//create dump user
+        Response exp = Response.ok().build();
         Response loginResult = instance.login(email, password);
-        assertEquals((String) loginResult.getEntity(), expToken);
+        assertEquals(exp.getStatus(),loginResult.getStatus());
         
         // Negative test: wrong id
         Response resultNegative = instance.login("nouseryet", "nopasswordyet");

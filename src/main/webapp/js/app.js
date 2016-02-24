@@ -155,6 +155,16 @@ function groupChat() {
         }
     });
 }
+function promoteUser() {
+    doAction("/ChatApp/app/user/promote/", "POST", "<user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user>", "application/xml", noftifai);
+}
+function createPrivateGroup() {
+    doAction("/ChatApp/app/group/createPrivate/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
+}
+//Temporarily one user can add more user to users tag in real front end
+function addUserPrivate(){
+    doAction("/ChatApp/app/group/addUser/"+$("select[name=joinedgrouplist]").val(), "POST", "<users><user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user></users>", "application/xml", noftifai);
+}
 function createGroup() {
     doAction("/ChatApp/app/group/create/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
 }
@@ -166,6 +176,9 @@ function listUser() {
 }
 function listUserGroup() {
     doAction("/ChatApp/app/group/", "GET", null, "application/xml", updateUserGroup);
+}
+function noftifai(data){
+    alert(data);
 }
 function updateUser(data) {
     $("select[name=userlist]").html(" ");

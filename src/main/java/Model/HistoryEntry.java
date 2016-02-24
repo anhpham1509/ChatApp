@@ -20,9 +20,8 @@ import javax.xml.bind.annotation.XmlTransient;
 public class HistoryEntry implements Serializable {
 
     private Date time;
-    private User from;
-//    @XmlTransient
-    private String to;
+    private User origin;
+    private String target;
     private String messsage;
     private String filePath;
     private String fileType;
@@ -31,17 +30,17 @@ public class HistoryEntry implements Serializable {
         this.time = new Date();
     }
 
-    public HistoryEntry(User from, String to, String message) {
+    public HistoryEntry(User from, String target, String message) {
         this.time = new Date();
-        this.from = from;
-        this.to = to;
+        this.origin = from;
+        this.target = target;
         this.messsage = message;
     }
 
-    public HistoryEntry(User from, String to, String message, String filePath, String fileType) {
+    public HistoryEntry(User origin, String target, String message, String filePath, String fileType) {
         this.time = new Date();
-        this.from = from;
-        this.to = to;
+        this.origin = origin;
+        this.target = target;
         this.messsage = message;
         this.filePath = filePath;
         this.fileType = fileType;
@@ -65,22 +64,21 @@ public class HistoryEntry implements Serializable {
         this.messsage = messsage;
     }
 
-    public User getFrom() {
-        return from;
+    public User getOrigin() {
+        return origin;
     }
 
     @XmlElement
-    public void setFrom(User from) {
-        this.from = from;
+    public void setOrigin(User origin) {
+        this.origin = origin;
     }
 
-    public String getTo() {
-        return to;
+    public String getTarget() {
+        return target;
     }
-//    @XmlTransient
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     public String getFilePath() {

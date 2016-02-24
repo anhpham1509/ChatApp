@@ -55,7 +55,7 @@
                 Group
                 <input type="text" name="groupName" />
                 <input type="submit" value="createGroup" onclick="createGroup()"/>
-
+                <input type="submit" value="Create Private Group" onclick="createPrivateGroup()"/>
             </div>
             <div class="container">
                 <br>
@@ -64,7 +64,8 @@
 
                 </select>
                 <input type="submit" value="Send Private Message" onclick="toSingleChat()"/>
-
+                <input type="submit" value="Promote User" onclick="promoteUser()"/>
+                
             </div>
             <div class="container">
                 <br>
@@ -73,6 +74,7 @@
 
                 </select>
                 <input type="submit" value="Join" onclick="joinGroup()"/>
+                <input type="submit" value="Add User to Private Group User chọn tạm ở trên" onclick="addUserPrivate()"/>
 
             </div>
             <div class="container">

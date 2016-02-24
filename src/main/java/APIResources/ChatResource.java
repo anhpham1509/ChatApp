@@ -58,7 +58,7 @@ public class ChatResource {
     private History h = History.getInstance();
 
     private List<User> users = h.getUsers();
-    final static ExecutorService ex = Executors.newSingleThreadExecutor();
+
 
     /**
      * Creates a new instance of ChatResource
@@ -69,6 +69,7 @@ public class ChatResource {
     /**
      * Retrieves representation of an instance of Resources.ChatResource
      *
+     * @param request
      * @param asyncResp
      */
     @RolesAllowed({"Admin", "User"})
@@ -79,29 +80,22 @@ public class ChatResource {
         //users.add(asyncResp);
     }
 
-    /*
-    @RolesAllowed({"Admin", "User"})
+    @RolesAllowed({"Admin"})
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response broadcast(final HistoryEntry e) {
+    public Response alert(final HistoryEntry e) {
 
         h.addEntry(e);
         h.save();
-        ex.submit(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (users) {
-                    Iterator<User> iterator = users.iterator();
-                    while (iterator.hasNext()) {
-                        iterator.next().getAsync().resume(e);
-                    }
-                }
-            }
-        });
+        Iterator<User> iterator = users.iterator();
+        while (iterator.hasNext()) {
+            iterator.next().getAsync().resume(e);
+        }
+
         return Response.accepted().build();
     }
-     */
+
     @RolesAllowed({"Admin", "User"})
     @Path("/@{param}")
     @POST
@@ -110,7 +104,7 @@ public class ChatResource {
     public Response chatToPrivate(final HistoryEntry e, @PathParam("param") String targetPrivate, @Context HttpServletRequest request) {
         int user_idx = (int) request.getAttribute("useridx");
         User originUser = users.get(user_idx);
-        if (targetPrivate.isEmpty() || targetPrivate.trim().isEmpty() || e.getMesssage().isEmpty() || e.getMesssage().trim().isEmpty() || e.getFrom().getEmail().isEmpty() || !e.getFrom().getEmail().equals(originUser.getEmail())) {
+        if (targetPrivate.isEmpty() || targetPrivate.trim().isEmpty() || e.getMesssage().isEmpty() || e.getMesssage().trim().isEmpty() || e.getOrigin().getEmail().isEmpty() || !e.getOrigin().getEmail().equals(originUser.getEmail())) {
             return Response.notAcceptable(null).build();
         }
 
@@ -130,19 +124,12 @@ public class ChatResource {
         }
         final User tUser = targetUser;
         // for sender
-        HistoryEntry entry = new HistoryEntry(e.getFrom(), "", e.getMesssage(), "", "");
+        HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
         originUser.getAsync().resume(entry);
-        
-        //   ex.submit(new Runnable() {
-        //      @Override
-        //      public void run() {
-        
-        //for receiver
-        entry.setTo("@"+email);
+
+        entry.setTarget("@" + email);
         tUser.getAsync().resume(entry);
 
-        //    }
-        // });
         h.addEntry(entry);
         h.save();
         return Response.ok().build();
@@ -156,7 +143,7 @@ public class ChatResource {
     public Response chatToGroup(final HistoryEntry e, @PathParam("param") String param, @Context HttpServletRequest request) {
         int user_idx = (int) request.getAttribute("useridx");
         User originUser = users.get(user_idx);
-        if (param.isEmpty() || param.trim().isEmpty() || e.getMesssage().isEmpty() || e.getMesssage().trim().isEmpty() || e.getFrom().getEmail().isEmpty() || !e.getFrom().getEmail().equals(originUser.getEmail())) {
+        if (param.isEmpty() || param.trim().isEmpty() || e.getMesssage().isEmpty() || e.getMesssage().trim().isEmpty() || e.getOrigin().getEmail().isEmpty() || !e.getOrigin().getEmail().equals(originUser.getEmail())) {
             return Response.notAcceptable(null).build();
         }
         System.out.println("in group chat");
@@ -180,17 +167,13 @@ public class ChatResource {
             return Response.notAcceptable(null).build();
         }
         // for sender
-        HistoryEntry entry = new HistoryEntry(e.getFrom(), "", e.getMesssage(), "", "");
+        HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
         users.get(user_idx).getAsync().resume(entry);
-//        ex.submit(new Runnable() {
-        //          @Override
-        //          public void run() {
-        // for receiver
-        entry.setTo(group_name);
+
+        entry.setTarget(group_name);
         for (User u : groupUser) {
             u.getAsync().resume(entry);
         }
-        ////      });
 
         h.addEntry(entry);
         h.save();
@@ -198,7 +181,6 @@ public class ChatResource {
     }
 
     // ---------------------------------------Uploading images-------------------------------------------
-    
     @RolesAllowed({"Admin", "User"})
     @Path("/image/@{param}")
     @POST
@@ -228,9 +210,9 @@ public class ChatResource {
         // for sender
         HistoryEntry entry = new HistoryEntry(originUser, "", "", fileName, "image");
         originUser.getAsync().resume(entry);
-        
+
         // for receiver
-        entry.setTo("@"+targetPrivate);
+        entry.setTarget("@" + targetPrivate);
         tUser.getAsync().resume(entry);
 
         h.addEntry(entry);
@@ -273,9 +255,9 @@ public class ChatResource {
         // for sender
         HistoryEntry entry = new HistoryEntry(originUser, "", "", fileName, "image");
         users.get(user_idx).getAsync().resume(entry);
-        
+
         // for receivers
-        entry.setTo(group_name);
+        entry.setTarget(group_name);
         for (User u : groupUser) {
             u.getAsync().resume(entry);
         }
