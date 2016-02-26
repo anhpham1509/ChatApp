@@ -82,7 +82,6 @@ public class GroupResource {
     public Response createPublicGroup(@Context HttpServletRequest request,Group g){
         int user_idx =(int)request.getAttribute("useridx");
         User currentUser = users.get(user_idx);
-        System.out.println("Fuck");
         if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
           return Response.notAcceptable(null).build();
         }
@@ -148,7 +147,6 @@ public class GroupResource {
             return Response.notAcceptable(null).build();
         }
         int useridx = (int)request.getAttribute("useridx");
-        System.out.println(useridx);
         for(Group g:groups){
             if(g.equals(jg)&&!g.isPrivate()){
             users.get(useridx).getSubcriptions().add(g);
