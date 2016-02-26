@@ -6,9 +6,11 @@
 package Model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.ws.rs.container.AsyncResponse;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,23 +21,23 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author beochot
  */
 @XmlRootElement
-public class User extends Messageable implements Serializable{
+public class User implements Serializable{
     private String email;
     private String password;
     private String role;
     private String token;
     private Set<Group> subcriptions;
-    
+
     private transient AsyncResponse async;
     public User() {
-        subcriptions=new HashSet<>();
+        subcriptions= new HashSet<>(); 
     }
 
     public User(String email, String password, String role) {
+        this();
         this.email = email;
         this.password = password;
         this.role = role;
-        subcriptions=new HashSet<>();
     }
 
 
@@ -59,10 +61,11 @@ public class User extends Messageable implements Serializable{
         return subcriptions;
     }
     @XmlTransient
-    public void setSubcriptions(Set<Group> subcriptions) {
+    public void setSubcriptions(CopyOnWriteArraySet<Group> subcriptions) {
         this.subcriptions = subcriptions;
     }
-    
+
+ 
 /*
     public boolean isIsOnline() {
         return isOnline;
@@ -109,7 +112,7 @@ public class User extends Messageable implements Serializable{
     public int hashCode() {
         int hash = 5;
         hash = 23 * hash + Objects.hashCode(this.email);
-        hash = 23 * hash + Objects.hashCode(this.role);
+       // hash = 23 * hash + Objects.hashCode(this.role);
         return hash;
     }
 

@@ -54,10 +54,13 @@ public class GroupResource {
     
     @RolesAllowed({"Admin","User"})
     @Path("{name}")
-    @GET
+    @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public List<User> getGroupUsers(@PathParam("param") String name){
+    public List<User> getGroupUsers(@Context HttpServletRequest request,@PathParam("param") String name){
+        int user_idx =(int)request.getAttribute("useridx");
+      
+        User currentUser = users.get(user_idx);
         List<User> members = new ArrayList<>();
         Group g = new Group(name);
             for(User u:users){
@@ -65,39 +68,95 @@ public class GroupResource {
                     members.add(u);
                 }
             }
+        if(!members.contains(currentUser)){
+            return null;
+        }
         return members;
     }
     
     @RolesAllowed({"Admin","User"})
-    @Path("/create")
+    @Path("/createPublic")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response create(Group g){
+    public Response createPublicGroup(@Context HttpServletRequest request,Group g){
+        int user_idx =(int)request.getAttribute("useridx");
+        User currentUser = users.get(user_idx);
+        System.out.println("Fuck");
         if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
           return Response.notAcceptable(null).build();
         }
         groups.add(g);
+        currentUser.getSubcriptions().add(g);
+        h.save();
+        return Response.ok().build();
+    
+    }
+    @RolesAllowed({"Admin","User"})
+    @Path("/createPrivate")
+    @POST
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response createPrivateGroup(@Context HttpServletRequest request,Group g){
+        int user_idx =(int)request.getAttribute("useridx");
+        User currentUser = users.get(user_idx);
+        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+          return Response.notAcceptable(null).build();
+        }
+        g.setPrivate(true);
+        if(groups.add(g)){
+            currentUser.getSubcriptions().add(g);
+            h.save();
+        return Response.ok().build();
+        }
+        return Response.notAcceptable(null).build();
+    }
+    @RolesAllowed({"Admin","User"})
+    @Path("/addUser/{param}")
+    @POST
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response addUsertoGroup(@Context HttpServletRequest request,@PathParam("param") String groupName,List<User> invitedUsers){
+        Group g = new Group(groupName);
+        int user_idx =(int)request.getAttribute("useridx");
+        User currentUser = users.get(user_idx);
+        
+        if(groupName.isEmpty()||groupName.trim().isEmpty()||users.isEmpty()||(!groups.contains(g))||(!currentUser.getSubcriptions().contains(g))){
+          return Response.notAcceptable(null).build();
+        }
+        for(User invitedUser:invitedUsers){
+            if(!users.contains(invitedUser)){
+                return Response.notAcceptable(null).build();
+            }
+            for(User u:users ){
+                if(u.equals(invitedUser)){
+                    u.getSubcriptions().add(g);
+                }
+            }
+        }
+       
         h.save();
         return Response.ok().build();
     }
-    
     @RolesAllowed({"Admin","User"})
     @Path("/join")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response join(Group g,@Context HttpServletRequest request){
-        if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
+    public Response join(Group jg,@Context HttpServletRequest request){
+        if(jg.getName().isEmpty()||jg.getName().trim().isEmpty()){
             return Response.notAcceptable(null).build();
         }
         int useridx = (int)request.getAttribute("useridx");
         System.out.println(useridx);
-        if(groups.contains(g)){
+        for(Group g:groups){
+            if(g.equals(jg)&&!g.isPrivate()){
             users.get(useridx).getSubcriptions().add(g);
             h.save();
             return Response.ok("ok").build();
         }
+        }
+        
         return Response.notAcceptable(null).build();
     }
     @RolesAllowed({"Admin","User"})

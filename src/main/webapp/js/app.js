@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+var isLoggedIn=false;
 $(document).ready(function () {
     var globalToken = token = "";
     var email = "";
     var inChatWith = "";
     var user = "";
+    
 
     getToken();
 
@@ -155,8 +156,18 @@ function groupChat() {
         }
     });
 }
+function promoteUser() {
+    doAction("/ChatApp/app/user/promote/", "POST", "<user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user>", "application/xml", noftifai);
+}
+function createPrivateGroup() {
+    doAction("/ChatApp/app/group/createPrivate/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
+}
+//Temporarily one user can add more user to users tag in real front end
+function addUserPrivate(){
+    doAction("/ChatApp/app/group/addUser/"+$("select[name=grouplist]").val(), "POST", "<users><user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user></users>", "application/xml", noftifai);
+}
 function createGroup() {
-    doAction("/ChatApp/app/group/create/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
+    doAction("/ChatApp/app/group/createPublic/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
 }
 function listGroup() {
     doAction("/ChatApp/app/group/all", "GET", null, "application/xml", updateGroup);
@@ -166,6 +177,9 @@ function listUser() {
 }
 function listUserGroup() {
     doAction("/ChatApp/app/group/", "GET", null, "application/xml", updateUserGroup);
+}
+function noftifai(data){
+    alert(data);
 }
 function updateUser(data) {
     $("select[name=userlist]").html(" ");
@@ -206,7 +220,7 @@ function updateHistory(data) {
     console.log(data);
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
-        var email = $(this).find("from").text();
+        var email = $(this).find("origin").text();
         var time = new Date($(this).find("time").text());
         var filePath = $(this).find("filePath").text();
         var fileType = $(this).find("fileType").text();
@@ -227,9 +241,9 @@ function handleNewMessage(data) {
     console.log(data);
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
-        var from = $(this).find("from").text();
+        var from = $(this).find("origin").text();
         var time = new Date($(this).find("time").text());
-        var target = $(this).find("to").text();
+        var target = $(this).find("target").text();
         var filePath = $(this).find("filePath").text();
         var fileType = $(this).find("fileType").text();
         if (fileType === 'image') {
@@ -303,7 +317,7 @@ function doAction(url, method, data, contentType, callback) {
     });
 }
 function composeMessage() {
-    return '<historyEntry><from><email>' + email + '</email></from><messsage>' + $("#message").val() + '</messsage><time>null</time></historyEntry>';
+    return '<historyEntry><origin><email>' + email + '</email></origin><messsage>' + $("#message").val() + '</messsage><time>null</time></historyEntry>';
     //"<historyEntry><from><email>lucky7</email></from><messsage>ga ga g222asda</messsage><time>null</time></historyEntry>";
 
 }
@@ -327,7 +341,9 @@ function auth(url) {
             listGroup();
             listUser();
             listUserGroup();
-            feedMessage();
+            if(!isLoggedIn)
+                feedMessage();
+            isLoggedIn=true;
         },
         failure: function (result) {
             alert(result);
@@ -336,6 +352,9 @@ function auth(url) {
 }
 function login() {
     auth("/ChatApp/app/auth/login");
+}
+function logout() { //Tam null callback
+    doAction("/ChatApp/app/auth/logout/", "GET", null, null,null);
 }
 function register() {
     auth("/ChatApp/app/auth/register");

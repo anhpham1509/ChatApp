@@ -73,6 +73,7 @@ public class HistoryResourceTest {
         entries.remove(entries.size()-1);
         entries.remove(entries.size()-1);
         entries.remove(entries.size()-1);
+
     }
 
     /**
@@ -125,7 +126,9 @@ public class HistoryResourceTest {
         HistoryResource instance = new HistoryResource();
         int expResult = 2;
         List<HistoryEntry> result = instance.getGroupHistory(groupName, request);
-        
+        for(HistoryEntry e :result){
+            System.out.println(e.getOrigin()+":"+e.getMesssage());
+        }
         assertEquals(expResult, result.size());
         
     }
