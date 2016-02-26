@@ -96,9 +96,7 @@ public class AuthResource {
         }
         for (User user : h.getUsers()) {
             if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
-                if(user.isLoggedIn()){
-                    return Response.status(Response.Status.BAD_REQUEST).build();
-                }
+                
                 user.setToken(DigestUtils.shaHex(user.getEmail() + SECRET + (new Random().nextInt(10000))));
                 return Response.ok(user.getToken()).build();
             }
@@ -112,7 +110,6 @@ public class AuthResource {
     public Response logout(@Context HttpServletRequest request) {
         int useridx = (int)request.getAttribute("useridx");
         User currentUser = History.getInstance().getUsers().get(useridx);
-        currentUser.setLoggedIn(false);
         currentUser.setToken(null);
         return Response.ok("Logged out successfully").build();
     }

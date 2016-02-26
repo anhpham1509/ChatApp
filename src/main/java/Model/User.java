@@ -27,8 +27,7 @@ public class User implements Serializable{
     private String role;
     private String token;
     private Set<Group> subcriptions;
-    private boolean isLoggedIn=false;
-    
+
     private transient AsyncResponse async;
     public User() {
         subcriptions= new HashSet<>(); 
@@ -66,14 +65,7 @@ public class User implements Serializable{
         this.subcriptions = subcriptions;
     }
 
-    public boolean isLoggedIn() {
-        return isLoggedIn;
-    }
-
-    public void setLoggedIn(boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-    }
-    
+ 
 /*
     public boolean isIsOnline() {
         return isOnline;
