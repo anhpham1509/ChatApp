@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.RolesAllowed;
@@ -59,6 +60,7 @@ public class ChatResource {
 
     private List<User> users = h.getUsers();
 
+    private ExecutorService ex = Executors.newSingleThreadExecutor();
 
     /**
      * Creates a new instance of ChatResource
@@ -76,10 +78,12 @@ public class ChatResource {
     @GET
     public void hangUp(@Context HttpServletRequest request, @Suspended AsyncResponse asyncResp) {
         int user_idx = (int) request.getAttribute("useridx");
+        asyncResp.setTimeout(1, TimeUnit.MINUTES);
         users.get(user_idx).setAsync(asyncResp);
-        //users.add(asyncResp);
+        //users.add(asyncResp); ch
     }
-/*
+
+    /*
     @RolesAllowed({"Admin"})
     @POST
     @Consumes(MediaType.APPLICATION_XML)
@@ -95,7 +99,7 @@ public class ChatResource {
 
         return Response.accepted().build();
     }
-*/
+     */
     @RolesAllowed({"Admin", "User"})
     @Path("/@{param}")
     @POST
@@ -103,7 +107,7 @@ public class ChatResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Response chatToPrivate(final HistoryEntry e, @PathParam("param") String targetPrivate, @Context HttpServletRequest request) {
         int user_idx = (int) request.getAttribute("useridx");
-        User originUser = users.get(user_idx);
+        final User originUser = users.get(user_idx);
         if (targetPrivate.isEmpty() || targetPrivate.trim().isEmpty() || e.getMesssage().isEmpty() || e.getMesssage().trim().isEmpty() || e.getOrigin().getEmail().isEmpty() || !e.getOrigin().getEmail().equals(originUser.getEmail())) {
             return Response.notAcceptable(null).build();
         }
@@ -124,11 +128,20 @@ public class ChatResource {
         }
         final User tUser = targetUser;
         // for sender
-        HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
-        originUser.getAsync().resume(entry);
+        final HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
+ //       ex.submit(new Runnable() {
+ //           @Override
+ //           public void run() {
+                originUser.getAsync().resume(entry);
 
-        entry.setTarget("@" + email);
-        tUser.getAsync().resume(entry);
+                entry.setTarget("@" + email);
+                if (tUser.getAsync() != null) {
+                    tUser.getAsync().resume(entry);
+                }
+
+ //           }
+
+ //       });
 
         h.addEntry(entry);
         h.save();
@@ -167,14 +180,22 @@ public class ChatResource {
             return Response.notAcceptable(null).build();
         }
         // for sender
-        HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
+        final HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
+ //       ex.submit(new Runnable() {
+ //           @Override
+  //          public void run() {
+                entry.setTarget(group_name);
+                for (User u : groupUser) {
+                    if (u.getAsync() != null) {
+                        u.getAsync().resume(entry);
+                    }
+                }
+   //         }
+
+  //      });
         users.get(user_idx).getAsync().resume(entry);
 
-        entry.setTarget(group_name);
-        for (User u : groupUser) {
-            u.getAsync().resume(entry);
-        }
-
+// a thu cach
         h.addEntry(entry);
         h.save();
         return Response.ok().build();

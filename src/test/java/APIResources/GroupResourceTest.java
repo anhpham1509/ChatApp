@@ -128,7 +128,7 @@ public class GroupResourceTest {
         request.setAttribute("useridx",users.size()-2);
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok().build();
-        Response result = instance.create(request,g);
+        Response result = instance.createPublicGroup(request,g);
         assertEquals(expResult.getStatus(), result.getStatus());
         
     }
@@ -140,7 +140,7 @@ public class GroupResourceTest {
             System.out.println("Group name:"+g.getName());
             GroupResource instance = new GroupResource();
             Response expResult = Response.notAcceptable(null).build();
-            Response result = instance.create(request,g);
+            Response result = instance.createPublicGroup(request,g);
             assertEquals(expResult.getStatus(), result.getStatus());
 
         }

@@ -75,14 +75,14 @@ public class GroupResource {
     }
     
     @RolesAllowed({"Admin","User"})
-    @Path("/create")
+    @Path("/createPublic")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response create(@Context HttpServletRequest request,Group g){
+    public Response createPublicGroup(@Context HttpServletRequest request,Group g){
         int user_idx =(int)request.getAttribute("useridx");
         User currentUser = users.get(user_idx);
-        
+        System.out.println("Fuck");
         if(g.getName().isEmpty()||g.getName().trim().isEmpty()){
           return Response.notAcceptable(null).build();
         }

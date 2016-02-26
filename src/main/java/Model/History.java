@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  *
@@ -25,14 +27,14 @@ import java.util.Set;
 public class History implements Serializable{
 
     private static History instance = null;
-    private List<HistoryEntry> entries;
+    private CopyOnWriteArrayList<HistoryEntry> entries;
 
-    private List<User> users;
+    private CopyOnWriteArrayList<User> users;
     private Set<Group> groups;
     private History() {
-        entries = Collections.synchronizedList(new ArrayList<HistoryEntry>());
-        users = Collections.synchronizedList(new ArrayList<User>());
-        groups= Collections.synchronizedSet(new HashSet<Group>()); 
+        entries =new CopyOnWriteArrayList<>();
+        users =new CopyOnWriteArrayList<>();
+        groups=Collections.synchronizedSet(new HashSet<Group>()); 
     }
 
     public static History getInstance() {
@@ -73,7 +75,7 @@ public class History implements Serializable{
     }
 */
   
-    private synchronized void restore() {
+    private void restore() {
         try {
             FileInputStream in = new FileInputStream("history.ser");
             ObjectInputStream obin = new ObjectInputStream(in);
@@ -87,8 +89,7 @@ public class History implements Serializable{
         } catch (ClassNotFoundException e) {
             System.out.println("Error reading object");
         }
-     /*if(entries==null)
-        entries = new ArrayList<>();*/
+
     }
 
     public synchronized void save() {

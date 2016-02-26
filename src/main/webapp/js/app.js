@@ -163,10 +163,10 @@ function createPrivateGroup() {
 }
 //Temporarily one user can add more user to users tag in real front end
 function addUserPrivate(){
-    doAction("/ChatApp/app/group/addUser/"+$("select[name=joinedgrouplist]").val(), "POST", "<users><user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user></users>", "application/xml", noftifai);
+    doAction("/ChatApp/app/group/addUser/"+$("select[name=grouplist]").val(), "POST", "<users><user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user></users>", "application/xml", noftifai);
 }
 function createGroup() {
-    doAction("/ChatApp/app/group/create/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
+    doAction("/ChatApp/app/group/createPublic/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
 }
 function listGroup() {
     doAction("/ChatApp/app/group/all", "GET", null, "application/xml", updateGroup);
@@ -349,6 +349,9 @@ function auth(url) {
 }
 function login() {
     auth("/ChatApp/app/auth/login");
+}
+function logout() { //Tam null callback
+    doAction("/ChatApp/app/auth/logout/", "GET", null, null,null);
 }
 function register() {
     auth("/ChatApp/app/auth/register");

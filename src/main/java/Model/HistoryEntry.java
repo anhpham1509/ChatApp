@@ -7,7 +7,8 @@ package Model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -25,23 +26,21 @@ public class HistoryEntry implements Serializable {
     private String messsage;
     private String filePath;
     private String fileType;
-
+    private Set<User> readUser;
     public HistoryEntry() {
         this.time = new Date();
+        this.readUser=new HashSet<>();
     }
 
-    public HistoryEntry(User from, String target, String message) {
-        this.time = new Date();
-        this.origin = from;
+    public HistoryEntry(User origin, String target, String message) {
+        this();
+        this.origin = origin;
         this.target = target;
         this.messsage = message;
     }
 
     public HistoryEntry(User origin, String target, String message, String filePath, String fileType) {
-        this.time = new Date();
-        this.origin = origin;
-        this.target = target;
-        this.messsage = message;
+        this(origin,target,message);
         this.filePath = filePath;
         this.fileType = fileType;
     }
@@ -99,4 +98,12 @@ public class HistoryEntry implements Serializable {
         this.fileType = fileType;
     }
 
+    public Set<User> getReadUser() {
+        return readUser;
+    }
+    @XmlTransient
+    public void setReadUser(Set<User> readUser) {
+        this.readUser = readUser;
+    }
+    
 }

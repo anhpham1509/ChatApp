@@ -48,6 +48,7 @@
                 <input type="text" name="email" />
                 <input type="password" name="password"/>
                 <input type="submit" value="Login" onclick="login()"/>
+                <input type="submit" value="Logout" onclick="logout()"/>
                 <input type="submit" value="Register" onclick="register()"/>
             </div>
             <div class="container">
