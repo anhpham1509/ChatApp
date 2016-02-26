@@ -60,7 +60,7 @@ public class ChatResource {
 
     private List<User> users = h.getUsers();
 
-    private ExecutorService ex = Executors.newSingleThreadExecutor();
+ //   private ExecutorService ex = Executors.newSingleThreadExecutor();
 
     /**
      * Creates a new instance of ChatResource

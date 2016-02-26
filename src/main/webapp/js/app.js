@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+var isLoggedIn=false;
 $(document).ready(function () {
     var globalToken = token = "";
     var email = "";
     var inChatWith = "";
     var user = "";
+    
 
     getToken();
 
@@ -340,7 +341,9 @@ function auth(url) {
             listGroup();
             listUser();
             listUserGroup();
-            feedMessage();
+            if(!isLoggedIn)
+                feedMessage();
+            isLoggedIn=true;
         },
         failure: function (result) {
             alert(result);
