@@ -60,8 +60,7 @@ public class ChatResource {
 
     private List<User> users = h.getUsers();
 
- //   private ExecutorService ex = Executors.newSingleThreadExecutor();
-
+    //   private ExecutorService ex = Executors.newSingleThreadExecutor();
     /**
      * Creates a new instance of ChatResource
      */
@@ -129,20 +128,18 @@ public class ChatResource {
         final User tUser = targetUser;
         // for sender
         final HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
- //       ex.submit(new Runnable() {
- //           @Override
- //           public void run() {
-                originUser.getAsync().resume(entry);
+        //       ex.submit(new Runnable() {
+        //           @Override
+        //           public void run() {
+        originUser.getAsync().resume(entry);
 
-                entry.setTarget("@" + email);
-                if (tUser.getAsync() != null) {
-                    tUser.getAsync().resume(entry);
-                }
+        entry.setTarget("@" + email);
+        if (tUser.getAsync() != null) {
+            tUser.getAsync().resume(entry);
+        }
 
- //           }
-
- //       });
-
+        //           }
+        //       });
         h.addEntry(entry);
         h.save();
         return Response.ok().build();
@@ -181,18 +178,18 @@ public class ChatResource {
         }
         // for sender
         final HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
- //       ex.submit(new Runnable() {
- //           @Override
-  //          public void run() {
-                entry.setTarget(group_name);
-                for (User u : groupUser) {
-                    if (u.getAsync() != null) {
-                        u.getAsync().resume(entry);
-                    }
-                }
-   //         }
+        //       ex.submit(new Runnable() {
+        //           @Override
+        //          public void run() {
+        entry.setTarget(group_name);
+        for (User u : groupUser) {
+            if (u.getAsync() != null) {
+                u.getAsync().resume(entry);
+            }
+        }
+        //         }
 
-  //      });
+        //      });
         users.get(user_idx).getAsync().resume(entry);
 
 // a thu cach
@@ -234,7 +231,9 @@ public class ChatResource {
 
         // for receiver
         entry.setTarget("@" + targetPrivate);
-        tUser.getAsync().resume(entry);
+        if (tUser.getAsync() != null) {
+            tUser.getAsync().resume(entry);
+        }
 
         h.addEntry(entry);
         h.save();
@@ -280,7 +279,9 @@ public class ChatResource {
         // for receivers
         entry.setTarget(group_name);
         for (User u : groupUser) {
-            u.getAsync().resume(entry);
+            if (u.getAsync() != null) {
+                u.getAsync().resume(entry);
+            }
         }
 
         h.addEntry(entry);
