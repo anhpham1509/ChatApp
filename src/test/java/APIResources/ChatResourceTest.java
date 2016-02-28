@@ -71,8 +71,6 @@ public class ChatResourceTest {
     @After
     public void tearDown() {
 
-
-
     }
 
     /**
@@ -160,7 +158,9 @@ public class ChatResourceTest {
         System.out.println("Entries size before:"+entries.size());
         entries.remove(e);
         System.out.println("Entries size after:"+entries.size());
+        entries.remove(entries.size()-1);
         assertEquals(expResult.getStatus(), result.getStatus());
+        
        
     }
     @Test

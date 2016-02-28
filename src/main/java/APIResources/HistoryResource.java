@@ -47,8 +47,8 @@ public class HistoryResource {
         
         // getting entries needed
         for (HistoryEntry e : h.getEntries()) {
-            String sender = e.getTo();
-            String receiver = e.getFrom().getEmail();
+            String sender = e.getTarget();
+            String receiver = e.getOrigin().getEmail();
             if ((sender.startsWith("@")) && sender.replaceFirst("@","").equals(fromEmail) && receiver.equals(toEmail)
               ||(sender.startsWith("@")) && sender.replaceFirst("@","").equals(toEmail) && receiver.equals(fromEmail)) {
                 history.add(e);
@@ -73,7 +73,7 @@ public class HistoryResource {
         final String group_name = groupName;
 
         for (HistoryEntry e : h.getEntries()) {
-            if (!e.getTo().startsWith("@") && (e.getTo()).equals(group_name)) {
+            if (!e.getTarget().startsWith("@") && (e.getTarget()).equals(group_name)) {
                 history.add(e);
             }
         }

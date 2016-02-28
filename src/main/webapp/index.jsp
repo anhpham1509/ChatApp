@@ -20,57 +20,67 @@
     </head>
     <body>
         <div class="container chat-wrapper">
-            
-                <h2 class="alert alert-success"></h2>
-                <table id="response" class="table table-bordered"></table>
-                <fieldset>
-                    <legend>Enter your message..</legend>
-                    <div class="controls">
-                        <input type="text" class="input-block-level" placeholder="Your message..." id="message" style="height:60px; width:100%"/>
-                        <input type="submit" class="btn btn-large btn-block btn-primary" name="sendMessage"
-                               value="Send message" onclick="normalChat()"/>
-                        <button class="btn btn-large btn-block" type="button" id="leave-room">Leave
-                            room</button>
+
+            <h2 class="alert alert-success"></h2>
+            <table id="response" class="table table-bordered"></table>
+            <fieldset>
+                <legend>Enter your message..</legend>
+                <div class="controls">
+                    <input type="text" class="input-block-level" placeholder="Your message..." id="message" style="height:60px; width:100%"/>
+                    <input type="submit" class="btn btn-large btn-block btn-primary" name="sendMessage"
+                           value="Send message" onclick="normalChat()"/>
+                    <div class="container">
+                        <form id="uploadImage" action="app/chat/image" method="post" enctype="multipart/form-data" onsubmit="sendImage()">
+                            Select an image:
+                            <input type="file" name="file" size="50" style="display:inline-block"/>
+                            <input type="submit" value="Upload it"/>
+                        </form>
                     </div>
-                </fieldset>
-        <div class="container">
-            <p id="newPrivateMessage"></p>
-        </div>
-        <div class="container">
+                    <button class="btn btn-large btn-block" type="button" id="leave-room">Leave
+                        room</button>
+                </div>
+            </fieldset>
+            <div class="container">
+                <p id="newPrivateMessage"></p>
+            </div>
+            <div class="container">
 
                 <input type="text" name="email" />
                 <input type="password" name="password"/>
                 <input type="submit" value="Login" onclick="login()"/>
+                <input type="submit" value="Logout" onclick="logout()"/>
                 <input type="submit" value="Register" onclick="register()"/>
-        </div>
-        <div class="container">
-            <br>
-            Group
+            </div>
+            <div class="container">
+                <br>
+                Group
                 <input type="text" name="groupName" />
                 <input type="submit" value="createGroup" onclick="createGroup()"/>
-           
-        </div>
-                <div class="container">
-        <br>
-            User List
+                <input type="submit" value="Create Private Group" onclick="createPrivateGroup()"/>
+            </div>
+            <div class="container">
+                <br>
+                User List
                 <select name="userlist" >
 
                 </select>
                 <input type="submit" value="Send Private Message" onclick="toSingleChat()"/>
+                <input type="submit" value="Promote User" onclick="promoteUser()"/>
                 
-                </div>
+            </div>
             <div class="container">
-        <br>
-            Group
+                <br>
+                Group
                 <select name="grouplist" >
 
                 </select>
                 <input type="submit" value="Join" onclick="joinGroup()"/>
-                
-        </div>
-             <div class="container">
-        <br>
-            Joined Group 
+                <input type="submit" value="Add User to Private Group User chọn tạm ở trên" onclick="addUserPrivate()"/>
+
+            </div>
+            <div class="container">
+                <br>
+                Joined Group 
                 <select name="joinedgrouplist" >
 
                 </select>

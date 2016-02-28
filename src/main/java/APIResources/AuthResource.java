@@ -29,6 +29,8 @@ import org.glassfish.jersey.client.oauth2.TokenResult;
 import org.apache.commons.codec.digest.DigestUtils;
 import Model.History;
 import Model.User;
+import java.util.Random;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response.Status;
 
 /**
@@ -94,10 +96,22 @@ public class AuthResource {
         }
         for (User user : h.getUsers()) {
             if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
+                
+                user.setToken(DigestUtils.shaHex(user.getEmail() + SECRET + (new Random().nextInt(10000))));
                 return Response.ok(user.getToken()).build();
             }
         }
         return Response.status(Status.NOT_ACCEPTABLE).build();
+    }
+    @RolesAllowed({"Admin", "User"})
+    @Path("/logout")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response logout(@Context HttpServletRequest request) {
+        int useridx = (int)request.getAttribute("useridx");
+        User currentUser = History.getInstance().getUsers().get(useridx);
+        currentUser.setToken(null);
+        return Response.ok("Logged out successfully").build();
     }
 
 

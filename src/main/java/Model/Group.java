@@ -11,18 +11,19 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author beochot
  */
 @XmlRootElement
-public class Group extends Messageable implements Serializable{
+public class Group implements Serializable{
     private String name;
-    //private List<User> subscribers;
+    private boolean isPrivate=false;
 
     public Group() {
-      //  subscribers=new ArrayList<>();
+     
     }
 
     public Group(String name) {
@@ -36,18 +37,15 @@ public class Group extends Messageable implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-/*
-    public List<User> getSubscribers() {
-        return subscribers;
+
+    public boolean isPrivate() {
+        return isPrivate;
     }
-    @XmlElement
-    public void setSubscribers(List<User> subscribers) {
-        this.subscribers = subscribers;
+    @XmlTransient
+    public void setPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
     }
-    public void addSubscribers(User u){
-        subscribers.add(u);
-    }
-*/
+    
     @Override
     public boolean equals(Object other){
         if (other == null) return false;
