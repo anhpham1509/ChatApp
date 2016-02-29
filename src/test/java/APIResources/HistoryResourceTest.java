@@ -27,7 +27,8 @@ import static org.junit.Assert.*;
 public class HistoryResourceTest {
     private History h=History.getInstance();
     private List<User> users = h.getUsers();
-    private List<HistoryEntry> entries=h.getEntries();
+    private List<HistoryEntry> privateEntries=h.getPrivateEntries();
+    private List<HistoryEntry> groupEntries=h.getGroupEntries();
     @Context
     private HttpServletRequest request = new TestHttpServletRequest();
     public HistoryResourceTest() {
@@ -44,10 +45,9 @@ public class HistoryResourceTest {
     @Before
     public void setUp() {
 
-        System.out.println("Entries size:"+entries.size());
-        User u = new User("beochot@gmail.com","1234","user");
+        User u = new User("beochot","1234","user");
         u.setAsync(new TestAsyncResponse());
-        User u2 =new User("beochot2@gmail.com","1234","user");
+        User u2 =new User("beochot2","1234","user");
         u2.setAsync(new TestAsyncResponse());
         Group g = new Group("test2");
         Group g2 = new Group("test3");
@@ -55,10 +55,10 @@ public class HistoryResourceTest {
         h.getGroups().remove(g2);
         u.getSubcriptions().add(g);
         u2.getSubcriptions().add(g);
-        entries.add(new HistoryEntry(u,"@"+u2.getEmail(),"haha1"));
-        entries.add(new HistoryEntry(u2,"@"+u.getEmail(),"haha2"));
-        entries.add(new HistoryEntry(u,g.getName(),"hoho1"));
-        entries.add(new HistoryEntry(u2,g.getName(),"hoho1"));
+        privateEntries.add(new HistoryEntry(u,"@"+u2.getEmail(),"haha1"));
+        privateEntries.add(new HistoryEntry(u2,"@"+u.getEmail(),"haha2"));
+        groupEntries.add(new HistoryEntry(u,g.getName(),"hoho1"));
+        groupEntries.add(new HistoryEntry(u2,g.getName(),"hoho1"));
         users.remove(u);
         users.remove(u2);
         users.add(u);
@@ -69,10 +69,10 @@ public class HistoryResourceTest {
     
     @After
     public void tearDown() {
-        entries.remove(entries.size()-1);
-        entries.remove(entries.size()-1);
-        entries.remove(entries.size()-1);
-        entries.remove(entries.size()-1);
+        privateEntries.remove(privateEntries.size()-1);
+        privateEntries.remove(privateEntries.size()-1);
+        groupEntries.remove(groupEntries.size()-1);
+        groupEntries.remove(groupEntries.size()-1);
 
     }
 
@@ -83,7 +83,7 @@ public class HistoryResourceTest {
     public void testGetPrivateHistory() {
         System.out.println("testGetPrivateHistory");
 
-        String privateTarget = "beochot2@gmail.com";
+        String privateTarget = "beochot2";
         request.setAttribute("useridx", users.size()-2);
         HistoryResource instance = new HistoryResource();
         int expResult = 2;
@@ -107,7 +107,7 @@ public class HistoryResourceTest {
     public void NotExistUserPrivateHistory() {
         System.out.println("NotExistUserPrivateHistory");
 
-        String privateTarget = "abubacaalbagadi@isoleader.com";
+        String privateTarget = "abubacaalbagadi";
         request.setAttribute("useridx", users.size()-2);
         HistoryResource instance = new HistoryResource();
         int expResult = 0;

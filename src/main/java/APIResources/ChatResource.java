@@ -60,10 +60,7 @@ public class ChatResource {
 
     private List<User> users = h.getUsers();
 
-    //   private ExecutorService ex = Executors.newSingleThreadExecutor();
-    /**
-     * Creates a new instance of ChatResource
-     */
+
     public ChatResource() {
     }
 
@@ -112,7 +109,7 @@ public class ChatResource {
         }
 
         System.out.println("in private chat");
-        final String email = targetPrivate;
+        String email = targetPrivate;
         User targetUser = null;
         Iterator<User> iterator = users.iterator();
         while (iterator.hasNext()) {
@@ -125,22 +122,19 @@ public class ChatResource {
         if (targetUser == null) {
             return Response.notAcceptable(null).build();
         }
-        final User tUser = targetUser;
+        User tUser = targetUser;
         // for sender
-        final HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
-        //       ex.submit(new Runnable() {
-        //           @Override
-        //           public void run() {
+        HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
+        
         originUser.getAsync().resume(entry);
 
         entry.setTarget("@" + email);
         if (tUser.getAsync() != null) {
             tUser.getAsync().resume(entry);
         }
-
-        //           }
-        //       });
-        h.addEntry(entry);
+        System.out.println(entry.getTarget());
+        
+        h.addPrivateEntry(entry);
         h.save();
         return Response.ok().build();
     }
@@ -156,9 +150,9 @@ public class ChatResource {
         if (param.isEmpty() || param.trim().isEmpty() || e.getMesssage().isEmpty() || e.getMesssage().trim().isEmpty() || e.getOrigin().getEmail().isEmpty() || !e.getOrigin().getEmail().equals(originUser.getEmail())) {
             return Response.notAcceptable(null).build();
         }
+        
         System.out.println("in group chat");
         final List<User> groupUser = new ArrayList<>();
-
         final String group_name = param;
         Iterator<User> iterator = users.iterator();
         while (iterator.hasNext()) {
@@ -178,9 +172,6 @@ public class ChatResource {
         }
         // for sender
         final HistoryEntry entry = new HistoryEntry(e.getOrigin(), "", e.getMesssage(), "", "");
-        //       ex.submit(new Runnable() {
-        //           @Override
-        //          public void run() {
         entry.setTarget(group_name);
         for (User u : groupUser) {
             if (u.getAsync() != null) {
@@ -193,7 +184,7 @@ public class ChatResource {
         users.get(user_idx).getAsync().resume(entry);
 
 // a thu cach
-        h.addEntry(entry);
+        h.addGroupEntry(entry);
         h.save();
         return Response.ok().build();
     }
@@ -230,12 +221,12 @@ public class ChatResource {
         originUser.getAsync().resume(entry);
 
         // for receiver
-        entry.setTarget("@" + targetPrivate);
+        entry.setTarget("@"+targetPrivate);
         if (tUser.getAsync() != null) {
             tUser.getAsync().resume(entry);
         }
 
-        h.addEntry(entry);
+        h.addPrivateEntry(entry);
         h.save();
         return Response.status(200).entity(fileName).build();
     }
@@ -284,7 +275,7 @@ public class ChatResource {
             }
         }
 
-        h.addEntry(entry);
+        h.addGroupEntry(entry);
         h.save();
         return Response.status(200).entity(fileName).build();
     }
