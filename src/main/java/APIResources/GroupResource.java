@@ -66,10 +66,7 @@ public class GroupResource {
 
         for (User u : users) {
             for (Group g : u.getSubcriptions()) {
-                System.out.println("Group :" + g.getName());
-                System.out.println("huhu" + groups.contains(new Group(name)));
                 if (g.getName().equals(name)) {
-                    System.out.println("Sao hok vao dc");
                     members.add(u);
                     break;
                 }
@@ -200,15 +197,26 @@ public class GroupResource {
             return Response.notAcceptable(null).build();
         }
         int useridx = (int) request.getAttribute("useridx");
-        if (groups.contains(lg)) {
-            users.get(useridx).getSubcriptions().remove(lg);
-            return Response.ok().build();
-        }
+
+        User currentUser = users.get(useridx);
+        HistoryEntry entry = new HistoryEntry(new User("System"), lg.getName(), currentUser.getEmail() + " has leaved the group");
         for (Group g : groups) {
             if (g.equals(lg) && !g.isPrivate()) {
-                if (users.get(useridx).getSubcriptions().remove(g)) {
+                if (currentUser.getSubcriptions().remove(g)) {
+                    System.out.println("Vao dc day ko");
                     g.setSize(g.getSize() - 1);
+                    for (User u : users) {
+                        System.out.println("con day thi sao");
+                        if (u.getSubcriptions().contains(lg)) {
+                            System.out.println("Toi me day roi");
+                            if (u.getAsync() != null) {
+                                u.getAsync().resume(entry);
+                            }
+                        }
+
+                    }
                 }
+                h.addGroupEntry(entry);
                 h.save();
                 return Response.ok("ok").build();
             }

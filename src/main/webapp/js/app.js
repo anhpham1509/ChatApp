@@ -209,6 +209,9 @@ function updateGroup(data) {
 function joinGroup() {
     doAction("/ChatApp/app/group/join/", "POST", "<group><name>" + $("select[name=grouplist]").val() + "</name></group>", "application/xml", doSomething);
 }
+function leaveGroup() {
+    doAction("/ChatApp/app/group/leave/", "POST", "<group><name>" + $("select[name=grouplist]").val() + "</name></group>", "application/xml", doSomething);
+}
 function doSomething(data) {
     $("#response").html(" ");
     doAction("/ChatApp/app/group/"+$("select[name=grouplist]").val(), "GET", null, "application/xml", doSomethingElse);

@@ -191,6 +191,7 @@ public class GroupResourceTest {
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok("ok").build();
         Response result = instance.leave(g, request);
+        h.getGroupEntries().remove(h.getGroupEntries().size()-1);
         assertEquals(expResult.getStatus(), result.getStatus());
     }
     @Test

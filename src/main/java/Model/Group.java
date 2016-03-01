@@ -22,9 +22,9 @@ public class Group implements Serializable{
     private String name;
     private boolean isPrivate=false;
     private int size;
-    private Set<User> gUsers;
+
     public Group() {
-        gUsers=new HashSet<>();
+
     }
 
     public Group(String name) {
@@ -56,14 +56,6 @@ public class Group implements Serializable{
         this.size = size;
     }
 
-    public Set<User> getgUsers() {
-        return gUsers;
-    }
-    @XmlTransient
-    public void setgUsers(Set<User> gUsers) {
-        this.gUsers = gUsers;
-    }
-    
     @Override
     public boolean equals(Object other){
         if (other == null) return false;
