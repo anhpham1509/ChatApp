@@ -61,12 +61,13 @@
             <div class="container">
                 <br>
                 User List
-                <select name="userlist" >
+                <select name="userlist" multiple>
 
                 </select>
                 <input type="submit" value="Send Private Message" onclick="toSingleChat()"/>
                 <input type="submit" value="Promote User" onclick="promoteUser()"/>
-                
+                <input type="text" placeholder="Enter alert" id="alertMessage"/>
+                <input type="submit" value="Send alert" onclick="sendAlert()"/>
             </div>
             <div class="container">
                 <br>

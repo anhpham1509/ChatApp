@@ -45,6 +45,7 @@ public class UserResource {
         for(User u:users){
             if(u.equals(promoteUser)){
                 u.setRole("Admin");
+                h.save();
                 return Response.ok().build();
             }
         }
@@ -60,6 +61,7 @@ public class UserResource {
         for(User u:users){
             if(u.equals(promoteUser)){
                 u.setRole("User");
+                h.save();
                 return Response.ok().build();
             }
         }
