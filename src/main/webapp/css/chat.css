@@ -19,7 +19,7 @@ body {
 
 @media(min-width:768px) {
     #chat-log{
-        padding-left: 225px;
+        padding-left: 200px;
     }
 }
 
@@ -38,7 +38,8 @@ body {
     padding-top: 15px;
     padding-bottom: 15px;
     line-height: 20px;
-    color: #999;
+    color: #ffffff;
+    text-shadow: 1px 1px darkgrey;
 }
 
 .top-nav>li>a:hover,
@@ -47,7 +48,7 @@ body {
 .top-nav>.open>a:hover,
 .top-nav>.open>a:focus {
     color: #fff;
-    background-color: #000;
+    background-color: #00AE98;
 }
 
 .top-nav>.open>.dropdown-menu {
@@ -97,26 +98,40 @@ ul.alert-dropdown {
     .side-nav {
         position: fixed;
         top: 51px;
-        left: 225px;
-        width: 225px;
-        margin-left: -225px;
+        left: 200px;
+        width: 200px;
+        margin-left: -200px;
         border: none;
         border-radius: 0;
         overflow-y: auto;
-        background-color: #222;
+        background-color: #F1F1F1;
         bottom: 0;
         overflow-x: hidden;
     }
 
     .side-nav>li>a {
-        width: 225px;
+        width: 200px;
     }
 
     .side-nav li a:hover,
     .side-nav li a:focus {
         outline: none;
-        background-color: #000 !important;
+        background-color: #00C2A9 !important;
     }
+}
+
+.navbar-inverse{
+    background-color: #00C2A9;
+    border-color: transparent;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #ffffff;
+    text-shadow: 1px 1px darkgrey;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #00C2A9;
 }
 
 .side-nav>li>ul {
@@ -127,7 +142,7 @@ ul.alert-dropdown {
     display: block;
     padding: 10px 15px 10px 38px;
     text-decoration: none;
-    color: #999;
+    color: #000000;
 }
 
 .side-nav>li>ul>li>form {
@@ -244,4 +259,9 @@ ul.alert-dropdown {
 #all-channels li:last-child{
     border-bottom: 0;
     margin-bottom: 0;
+}
+
+.modal-body {
+    height: 325px;
+    overflow-y: scroll;
 }

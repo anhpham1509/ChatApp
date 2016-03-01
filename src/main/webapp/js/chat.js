@@ -116,13 +116,17 @@ $(document).ready(function () {
     // Show ALL Groups
     function listAllGroup() {
         callAjax("/ChatApp/app/group/all", "GET", null, "application/xml", updateAllGroup);
-        addChannel();
+        addNewChannel();
     }
 
     // List all group to JOIN in ul
     function updateAllGroup(data) {
         $("ul#all-channels").html(" ");
         $(data).find("name").each(function () {
+            callAjax("/ChatApp/app/group/" + this.innerHTML, "POST", null, "application/xml", function(res){
+                console.log(res);
+            });
+
             if (! checkJoined(this.innerHTML)){
                 $("ul#all-channels").append("\
                 <li class='left clearfix'>\
@@ -228,7 +232,7 @@ $(document).ready(function () {
             var message = $(this).find("messsage").text();
             var from = $(this).find("email").text();
             var time = new Date($(this).find("time").text());
-            var to = $(this).find("to").text();
+            var to = $(this).find("target").text();
 
             if (!to) {
                 $("ul#chat").append(newMessage(from, formatTime(time), message));
@@ -352,25 +356,65 @@ $(document).ready(function () {
             </li>";
     }
 
+    $('button.close').click(function(){
+        $('#add-public-channel').hide();
+        $('#add-public-channel-btn').show();
+
+        $('#add-private-channel').hide();
+        $('#add-private-channel-btn').show();
+    });
+
     // Add new channel
-    function addChannel() {
-        $('#add-channel').hide();
-        $('#add-channel-btn').click(function () {
-            $('#add-channel').show();
-            $('#add-channel-btn').hide();
-            $('#add-channel').on('submit', function (e) {
+    function addNewChannel() {
+        $('#add-public-channel').hide();
+        $('#add-public-channel-btn').show();
+
+        $('#add-private-channel').hide();
+        $('#add-private-channel-btn').show();
+
+        $('#add-public-channel-btn').click(function () {
+            $('#add-public-channel').show();
+
+            $('#add-public-channel-btn').hide();
+            $('#add-private-channel-btn').hide();
+
+            $('#add-public-channel').on('submit', function (e) {
                 e.preventDefault();
                 //console.log($("#new-channel").val());
-                createGroup($("#new-channel").val());
-                addChannel();
-                $('#add-channel-btn').show();
+                createPublicGroup($("#public-channel").val());
+                addNewChannel();
+                $("#public-channel").val("");
+            });
+        });
+
+
+        $('#add-private-channel-btn').click(function () {
+            $('#add-private-channel').show();
+
+            $('#add-private-channel-btn').hide();
+            $('#add-public-channel-btn').hide();
+
+            $('#add-private-channel').on('submit', function (e) {
+                e.preventDefault();
+                //console.log($("#new-channel").val());
+                createPrivateGroup($("#private-channel").val());
+                addNewChannel();
+                $("#private-channel").val("");
             });
         });
     }
 
-    // Create new group
-    function createGroup(group) {
-        callAjax("/ChatApp/app/group/create/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
+    // Create new public group
+    function createPublicGroup(group) {
+        callAjax("/ChatApp/app/group/createPublic/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
+            function () {
+                joinGroup(group);
+            });
+    }
+
+    // Create new private group
+    function createPrivateGroup(group) {
+        callAjax("/ChatApp/app/group/createPrivate/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
             function () {
                 joinGroup(group);
             });
@@ -391,7 +435,7 @@ $(document).ready(function () {
 
     // Prepare xml to POST
     function composeMessage() {
-        return '<historyEntry><from><email>' + email + '</email></from><messsage>' + $("#message").val() + '</messsage><time>null</time></historyEntry>';
+        return '<historyEntry><origin><email>' + email + '</email></origin><messsage>' + $("#message").val() + '</messsage><time>null</time></historyEntry>';
 
     }
 

@@ -292,14 +292,26 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button class="btn btn-success" id="add-channel-btn">Add new channel</button>
-                        <form id='add-channel'>
+                        <button class="btn btn-success" id="add-public-channel-btn">Add public channel</button>
+                        <form id='add-public-channel'>
                             <div class='form-group input-group'>
-                                <input id='new-channel' type='text' class='form-control'
+                                <input id='public-channel' type='text' class='form-control'
                                        placeholder='Enter channel name here'>
 
                                 <span class='input-group-btn'>
                                     <button type='submit' class='btn btn-success'>Add</button>
+                                </span>
+                            </div>
+                        </form>
+
+                        <button class="btn btn-primary" id="add-private-channel-btn">Add private channel</button>
+                        <form id='add-private-channel'>
+                            <div class='form-group input-group'>
+                                <input id='private-channel' type='text' class='form-control'
+                                       placeholder='Enter channel name here'>
+
+                                <span class='input-group-btn'>
+                                    <button type='submit' class='btn btn-primary'>Add</button>
                                 </span>
                             </div>
                         </form>
