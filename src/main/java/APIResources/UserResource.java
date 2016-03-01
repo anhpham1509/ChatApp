@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
 public class UserResource {
     private History h=History.getInstance();
     private List<User> users=h.getUsers();
-    final static ExecutorService ex = Executors.newSingleThreadExecutor();
+
     
     @RolesAllowed({"Admin","User"})
     @GET

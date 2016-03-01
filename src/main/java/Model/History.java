@@ -43,7 +43,7 @@ public class History implements Serializable{
             synchronized (History.class) {
                 if (instance == null) {
                     instance = new History();
-                    History.getInstance().restore();
+                    
                 }
             }
 

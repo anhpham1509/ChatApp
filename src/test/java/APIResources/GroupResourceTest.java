@@ -70,6 +70,7 @@ public class GroupResourceTest {
     
     @After
     public void tearDown() {
+       
     }
 
     /**
@@ -82,6 +83,7 @@ public class GroupResourceTest {
         request.setAttribute("useridx",users.size()-2);
         Set<Group> expResult = users.get(users.size()-2).getSubcriptions();
         Set<Group> result = instance.getJoinedGroups(request);
+        
         assertEquals(expResult, result);
         
     }
@@ -155,6 +157,7 @@ public class GroupResourceTest {
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok("ok").build();
         Response result = instance.join(g, request);
+        h.getGroupEntries().remove(h.getGroupEntries().size()-1);
         assertEquals(expResult.getStatus(), result.getStatus());
     }
     @Test

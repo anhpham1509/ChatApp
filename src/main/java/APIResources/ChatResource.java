@@ -132,7 +132,7 @@ public class ChatResource {
         if (tUser.getAsync() != null) {
             tUser.getAsync().resume(entry);
         }
-        System.out.println(entry.getTarget());
+        
         
         h.addPrivateEntry(entry);
         h.save();

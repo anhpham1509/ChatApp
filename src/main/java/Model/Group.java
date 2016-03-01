@@ -6,9 +6,9 @@
 package Model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -21,12 +21,14 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Group implements Serializable{
     private String name;
     private boolean isPrivate=false;
-
+    private int size;
+    private Set<User> gUsers;
     public Group() {
-     
+        gUsers=new HashSet<>();
     }
 
     public Group(String name) {
+        this();
         this.name = name;
     }
     
@@ -44,6 +46,22 @@ public class Group implements Serializable{
     @XmlTransient
     public void setPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public Set<User> getgUsers() {
+        return gUsers;
+    }
+    @XmlTransient
+    public void setgUsers(Set<User> gUsers) {
+        this.gUsers = gUsers;
     }
     
     @Override

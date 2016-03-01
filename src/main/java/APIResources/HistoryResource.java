@@ -50,11 +50,6 @@ public class HistoryResource {
         for (HistoryEntry e : h.getPrivateEntries()) {
             String sender = e.getTarget();
             String receiver = e.getOrigin().getEmail();
-            if(sender==null){
-                System.out.print("Receiver: "+receiver);
-                System.out.print("Message"+e.getMesssage());
-                System.out.println("Fuck sender");
-            }
 
             if ((sender.equals("@"+fromEmail) && receiver.equals(toEmail))||(sender.equals("@"+toEmail) && receiver.equals(fromEmail))) {
                 e.getReadUser().add(currentUser);

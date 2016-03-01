@@ -6,8 +6,6 @@
 package APIResources;
 
 import AuthConfig.AuthService;
-import static java.lang.System.out;
-import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
