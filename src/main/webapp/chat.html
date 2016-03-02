@@ -20,6 +20,7 @@
         <!--Jquery-UI css-->
         <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
         <link rel="stylesheet" type="text/css" href="css/jquery-ui.theme.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-multiselect.css">
 
         <!-- Custom Fonts -->
         <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -41,6 +42,7 @@
         <!-- jQuery -->
         <script src="js/jquery-1.12.0.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
+        <script src="js/bootstrap-multiselect.js"></script>
 
         <!-- Custom jQuery -->
         <script src="js/chat.js"></script>
@@ -64,6 +66,7 @@
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
+                <li id="openAlert" style="padding-top:4%"><button class="btn btn-default" data-toggle='modal' data-target='#alert-modal'>Send alert</button></li>
                 <li class="dropdown">
                     <a href="javascrip:;" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell"></i> <b class="caret"></b>
@@ -266,7 +269,7 @@
             <!-- /.navbar-collapse -->
         </nav>
 
-        <!-- Join Channel -->
+        <!-- Group mgmt modal -->
         <div id="join-group" class="modal fade" role="dialog">
             <div class="modal-dialog">
 
@@ -300,6 +303,50 @@
                         <button class="btn btn-success" id="add-group-btn">Add new group</button>
                     </div>
 
+                </div>
+            </div>
+        </div>
+
+        <!-- User mgmt modal -->
+        <div id="user-mgmt-modal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 id="modal-title" class="modal-title">User management</h3>
+                    </div>
+                    <div class="modal-body">
+                        <i class="form-info">Select a user to promote to admin:</i>
+                        <select name="userlist"></select>
+                    </div>
+                    <div id="modal-footer" class="modal-footer">
+                        <button id="promoteUser" class="btn btn-success">Promote user</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert modal -->
+        <div id="alert-modal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 id="modal-title" class="modal-title">Alert</h3>
+                    </div>
+                    <div class="modal-body">
+                        <i class="form-info">Select multiple users to send alerts:</i>
+                        <select name="userlist" style="float:left; width:50%;" multiple="multiple"></select>
+                        <i class="form-info">Enter alert message:</i>
+                        <input style="display:block" type="text" size="50" id="alertMessage"/>
+                    </div>
+                    <div id="modal-footer" class="modal-footer">
+                        <button id="sendAlert" class="btn btn-success">Send alerts</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -426,6 +473,8 @@
         <!-- Bootstrap Core JavaScript -->
         <script src="js/bootstrap.min.js"></script>
 
+        <div id="dialogs">
+        </div>
     </body>
 
 </html>

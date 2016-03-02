@@ -29,49 +29,60 @@ import javax.ws.rs.core.Response;
  */
 @Path("/user")
 public class UserResource {
-    private History h=History.getInstance();
-    private List<User> users=h.getUsers();
 
-    
-    @RolesAllowed({"Admin","User"})
+    private History h = History.getInstance();
+    private List<User> users = h.getUsers();
+
+    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public List<User> getAll() {
         return users;
     }
     
-    @RolesAllowed({"Admin","User"})
+    @RolesAllowed({"Admin", "User"})
+    @Path("/role")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getUserInfo(@Context HttpServletRequest request) {
+        int user_idx = (int) request.getAttribute("useridx");
+        User currentUser = users.get(user_idx);
+        return currentUser.getRole();
+    }
+
+    @RolesAllowed({"Admin", "User"})
     @Path("/promote")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public Response promote(User promoteUser) {
-        for(User u:users){
-            if(u.equals(promoteUser)){
+        for (User u : users) {
+            if (u.equals(promoteUser)) {
                 u.setRole("Admin");
                 h.save();
                 return Response.ok().build();
             }
         }
-        
+
         return Response.notModified().build();
     }
-    @RolesAllowed({"Admin","User"})
+
+    @RolesAllowed({"Admin", "User"})
     @Path("/demote")
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public Response demote(User promoteUser) {
-        for(User u:users){
-            if(u.equals(promoteUser)){
+        for (User u : users) {
+            if (u.equals(promoteUser)) {
                 u.setRole("User");
                 h.save();
                 return Response.ok().build();
             }
         }
-        
-        return Response.notModified().build();
-}
 
+        return Response.notModified().build();
+    }
+    
 
 }

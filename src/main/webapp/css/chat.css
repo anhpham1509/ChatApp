@@ -293,6 +293,20 @@ ul.alert-dropdown {
     margin: 10px 28px;
 }
 
+.form-info {
+    display:block;
+    padding:10px 0;
+}
+
+.modal-body {
+    min-height:120px;
+}
+
+#user-mgmt {
+    color: black;
+    margin: 10px 28px;
+}
+
 .tooltip {
     text-align: left;
 }

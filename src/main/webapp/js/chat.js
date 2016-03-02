@@ -2,17 +2,17 @@ var token = localStorage.getItem("token");
 var email = localStorage.getItem('email');
 var target = "";
 var joinedGroups = [];
+var isAdmin;
 
 
 
 $(document).ready(function () {
 
     //getToken();
-
+    getUserInfo();
     listJoinedGroups();
     listAllUsers();
     feedMessage();
-    getAlerts();
     //unreadMess();
 
     //Insert Username
@@ -20,6 +20,7 @@ $(document).ready(function () {
 
     // Hide post mess
     $('.send-message').hide();
+    getAlerts();
 
     // Send new messages
     $('form.send-message').on('submit', function (event) {
@@ -37,6 +38,39 @@ $(document).ready(function () {
     $('#log-out').click(function () {
         localStorage.clear();
         window.location = location.origin + '/ChatApp/';
+    });
+
+    $("#openAlert").click(function () {
+        console.log("in alert", isAdmin);
+        if (!isAdmin) {
+            alert("Only admins could send alerts !");
+        }
+    });
+    
+    $("#sendAlert").click(function(){
+        var xml = "<alert><time>null</time><origin>" + "<email>" + email + "</email>" + "</origin>" + "<targetList>" + $("select[name=userlist]").val() + "</targetList><message>" + $("#alertMessage").val() + "</message></alert>";
+        console.log(xml);
+        $.ajax({
+            url: '/ChatApp/app/alert',
+            method: "POST",
+            contentType: "application/xml",
+            data: xml,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    });
+
+    $("#promoteUser").click(function () {
+        callAjax("/ChatApp/app/user/promote/", "POST", "<user>" + "<email>" + $("select[name=userlist]").val() + "</email>" + "</user>", "application/xml", function () {
+            alert("Successfully promoted!")
+        });
     });
 
     // Polling messages
@@ -80,14 +114,32 @@ $(document).ready(function () {
         callAjax("/ChatApp/app/user/", "GET", null, "application/xml", updateUser);
     }
 
+// Get user's info
+    function getUserInfo() {
+        callAjax("/ChatApp/app/user/role", "GET", null, "application/xml", function (data) {
+            if (data !== "Admin") {
+                isAdmin = false;
+            } else {
+                isAdmin = true;
+            }
+        });
+    }
+
 // List all users in ul
     function updateUser(data) {
         $("ul#users").html(" ");
+        $('ul#users').append("\
+            <button class='btn btn-default' style='' id='user-mgmt'\
+                data-toggle='modal' data-target='#user-mgmt-modal'>\
+                Management\
+            </button>");
         $(data).find("email").each(function () {
             if (this.innerHTML !== email) {
+                $("select[name=userlist]").append("<option value='" + this.innerHTML + "'>" + this.innerHTML + "</option>");
                 $("ul#users").append("<li><a href='#" + this.innerHTML + "' class='user'>" + this.innerHTML + " <span class='badge'></span></a></li>");
             }
         });
+        $("select[name=userlist]").multiselect({maxHeight: 200});
 
         //getPrivateHistory($('ul#users li:nth-child(2)').text());
 
@@ -128,7 +180,7 @@ $(document).ready(function () {
         $('#join-modal').click(function () {
             listAllGroups();
         });
-
+        
         unreadMess();
     }
 
@@ -569,78 +621,56 @@ $(document).ready(function () {
         });
     }
 
-});
 
 // Get Token
-function getToken() {
-    var path = window.location.search;
+    function getToken() {
+        var path = window.location.search;
 
-    if (path.indexOf("token") !== -1) {
-        var token = window.location.search.split("token=")[1];
-        //globalToken = token;
-        localStorage.setItem("token", token);
-        location.replace(window.location.origin + "/ChatApp/");
-        console.log(localStorage.getItem("token"));
-    } else {
-        token = localStorage.getItem("token");
+        if (path.indexOf("token") !== -1) {
+            var token = window.location.search.split("token=")[1];
+            //globalToken = token;
+            localStorage.setItem("token", token);
+            location.replace(window.location.origin + "/ChatApp/");
+            console.log(localStorage.getItem("token"));
+        } else {
+            token = localStorage.getItem("token");
+        }
     }
-}
 
 // Sending images
-function sendImage() {
-    event.preventDefault();
-    if (!target) {
-        return;
-    }
-    var imgURL = "/ChatApp/app/chat/image/" + target;
-    var file = $('#send-image').get(0).files[0];
-    var formData = new FormData();
-    formData.append('file', file);
-    $.ajax({
-        type: 'POST',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Authorization", token);
-        },
-        url: imgURL,
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function (data) {
-            //console.log("success");
-            //console.log(data);
-        },
-        error: function (data) {
-            //console.log("error");
-            //console.log(data);
+    function sendImage() {
+        event.preventDefault();
+        if (!target) {
+            return;
         }
-    });
-
-// Send alert
-    function sendAlert() {
-        console.log($("select[name=userlist]").val());
-        var xml = "<alert><time>null</time><origin>" + "<email>" + user + "</email>" + "</origin>" + "<targetList>" + $("select[name=userlist]").val() + "</targetList><message>" + $("#alertMessage").val() + "</message></alert>";
-        console.log(xml);
+        var imgURL = "/ChatApp/app/chat/image/" + target;
+        var file = $('#send-image').get(0).files[0];
+        var formData = new FormData();
+        formData.append('file', file);
         $.ajax({
-            url: '/ChatApp/app/alert',
-            method: "POST",
-            contentType: "application/xml",
-            data: xml,
+            type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", token);
             },
-            success: function (result) {
-                console.log(result);
+            url: imgURL,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                //console.log("success");
+                //console.log(data);
             },
-            error: function (err) {
-                console.log(err);
+            error: function (data) {
+                //console.log("error");
+                //console.log(data);
             }
         });
     }
 
 // Get alerts when logging in
     function getAlerts() {
-        doAction("/ChatApp/app/alert", "GET", null, "application/xml", displayAlert);
+        callAjax("/ChatApp/app/alert", "GET", null, "application/xml", displayAlert);
     }
 
 // Dislay alert
@@ -672,7 +702,7 @@ function sendImage() {
                         },
                         click: function () {
                             var $this = $(this);
-                            doAction("/ChatApp/app/alert/" + id, "POST", null, null, function () {
+                            callAjax("/ChatApp/app/alert/" + id, "POST", null, null, function () {
                                 $this.dialog("close");
                             });
                         }
@@ -681,6 +711,6 @@ function sendImage() {
             });
         });
     }
-}
+});
 
 
