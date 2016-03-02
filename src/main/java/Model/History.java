@@ -22,20 +22,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author beochot
  */
-public class History implements Serializable{
+public class History implements Serializable {
 
     private static History instance = null;
 
     private CopyOnWriteArrayList<HistoryEntry> groupEntries;
     private CopyOnWriteArrayList<HistoryEntry> privateEntries;
     private CopyOnWriteArrayList<User> users;
+    private CopyOnWriteArrayList<Alert> alerts;
     private Set<Group> groups;
-    private History() {
 
+    private History() {
         users =new CopyOnWriteArrayList<>();
         groups=Collections.synchronizedSet(new HashSet<Group>()); 
         groupEntries=new CopyOnWriteArrayList<>();
         privateEntries=new CopyOnWriteArrayList<>();
+        alerts = new CopyOnWriteArrayList<>();
     }
 
     public static History getInstance() {
@@ -52,10 +54,10 @@ public class History implements Serializable{
 
     }
 
-
     public void addUser(User u){
         users.add(u);
     }
+    
     public List<User> getUsers() {
         return users;
     }
@@ -78,8 +80,14 @@ public class History implements Serializable{
         return privateEntries;
     }
 
+    public List<Alert> getAlerts() {
+        return alerts;
+    }
 
-  
+    public void addAlert(Alert a) {
+        this.alerts.add(a);
+    }
+
     private void restore() {
         try {
             FileInputStream in = new FileInputStream("history.ser");
