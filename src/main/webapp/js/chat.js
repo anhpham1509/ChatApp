@@ -13,17 +13,10 @@ $(document).ready(function () {
     listJoinedGroups();
     listAllUsers();
     feedMessage();
+    unreadMess();
 
     // Hide post mess
     $('.send-message').hide();
-
-    $('button.close').click(function () {
-        $('#add-public-channel').hide();
-        $('#add-public-channel-btn').show();
-
-        $('#add-private-channel').hide();
-        $('#add-private-channel-btn').show();
-    });
 
     // Send new messages
     $('form.send-message').on('submit', function (event) {
@@ -206,9 +199,9 @@ $(document).ready(function () {
 
             // Add new group
             addGroup();
-        });
 
-        return list;
+            event.preventDefault();
+        });
     }
 
 
@@ -233,6 +226,7 @@ $(document).ready(function () {
                 listAllGroups();
             });
         event.preventDefault();
+
     }
 
 // Leave group
@@ -322,18 +316,18 @@ $(document).ready(function () {
 
                         //console.log(to + "is different from: " + target.slice(1));
                         //console.log($("a.user[href='#" + to + "']").find(".badge"));
-                        newMessCount = $("a.channel[href='#" + to + "'] > span.badge").html();
+                        newMessCount = $("a.group[href='#" + to + "'] > span.badge").html();
                         //console.log("count: " + newMessCount);
                         if (newMessCount === "") {
                             //console.log("Current: 0");
-                            $("a.channel[href='#" + to + "'] > span.badge").html("1");
+                            $("a.group[href='#" + to + "'] > span.badge").html("1");
                             //console.log("Switch to: 1");
                         }
                         else {
                             newMessCount = parseInt(newMessCount);
                             //console.log("Current: " + newMessCount);
                             newMessCount += 1;
-                            $("a.channel[href='#" + to + "'] > span.badge").html(newMessCount.toString());
+                            $("a.group[href='#" + to + "'] > span.badge").html(newMessCount.toString());
                             //console.log("Switch to: " + newMessCount);
                         }
                     }
@@ -387,18 +381,18 @@ $(document).ready(function () {
 
                             //console.log(to + "is different from: " + target.slice(1));
                             //console.log($("a.user[href='#" + to + "']").find(".badge"));
-                            newMessCount = $("a.channel[href='#" + to + "'] > span.badge").html();
+                            newMessCount = $("a.group[href='#" + to + "'] > span.badge").html();
                             //console.log("count: " + newMessCount);
                             if (newMessCount === "") {
                                 //console.log("Current: 0");
-                                $("a.channel[href='#" + to + "'] > span.badge").html("1");
+                                $("a.group[href='#" + to + "'] > span.badge").html("1");
                                 //console.log("Switch to: 1");
                             }
                             else {
                                 newMessCount = parseInt(newMessCount);
                                 //console.log("Current: " + newMessCount);
                                 newMessCount += 1;
-                                $("a.channel[href='#" + to + "'] > span.badge").html(newMessCount.toString());
+                                $("a.group[href='#" + to + "'] > span.badge").html(newMessCount.toString());
                                 //console.log("Switch to: " + newMessCount);
                             }
                         }
@@ -492,7 +486,7 @@ $(document).ready(function () {
             </li>";
     }
 
-// Add new channel
+// Add new group
     function addGroup() {
         $('#add-group-btn').click(function () {
             $('#modal-title').html("Create a new group");
@@ -566,6 +560,13 @@ $(document).ready(function () {
     function composeMessage() {
         return '<historyEntry><origin><email>' + email + '</email></origin><messsage>' + $("#message").val() + '</messsage><time>null</time></historyEntry>';
 
+    }
+
+    // Unread mess
+    function unreadMess() {
+        callAjax("/ChatApp/history/unread/", "GET", null, "application/xml", function(data){
+            console.log(data);
+        });
     }
 
 });
