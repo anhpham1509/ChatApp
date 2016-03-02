@@ -568,19 +568,19 @@ $(document).ready(function () {
 
     // Unread mess
     function unreadMess() {
-        callAjax("/ChatApp/app/history/unread", "GET", null, "text", function(data){
-            var newMess = "Hello new man";
-            console.log(newMess);
+        callAjax("/ChatApp/app/history/unread", "GET", null, "application/xml", function(data){
             var unreads = data.split("|");
-            console.log(unreads);
-            for (var unread in unreads){
-                var info = unread.split(":");
-                console.log(info);
-                if (info[0].startsWith("@")){
-                    $("a.user[href='#" + info[0] + "'] > span.badge").html(info[1]);
-                }
-                else {
-                    $("a.group[href='#" + info[0] + "'] > span.badge").html(info[1]);
+            for (var idx in unreads){
+                if (unreads[idx] !== "") {
+                    //console.log(unreads[idx]);
+                    var info = unreads[idx].split(":");
+                    //console.log(info);
+                    if (info[0].startsWith("@")) {
+                        $("a.user[href='#" + info[0] + "'] > span.badge").html(info[1]);
+                    }
+                    else {
+                        $("a.group[href='#" + info[0] + "'] > span.badge").html(info[1]);
+                    }
                 }
             }
         });
