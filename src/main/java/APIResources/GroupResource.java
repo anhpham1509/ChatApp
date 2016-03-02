@@ -201,7 +201,7 @@ public class GroupResource {
         User currentUser = users.get(useridx);
         HistoryEntry entry = new HistoryEntry(new User("System"), lg.getName(), currentUser.getEmail() + " has leaved the group");
         for (Group g : groups) {
-            if (g.equals(lg) && !g.isPrivate()) {
+            if (g.equals(lg)) {
                 if (currentUser.getSubcriptions().remove(g)) {
                     System.out.println("Vao dc day ko");
                     g.setSize(g.getSize() - 1);
