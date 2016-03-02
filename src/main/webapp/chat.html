@@ -269,7 +269,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h3 class="modal-title">Group management</h3>
+                        <h3 id="modal-title" class="modal-title">Group management</h3>
                     </div>
                     <div class="modal-body">
                         <ul id="all-group">
@@ -291,30 +291,8 @@
                         </ul>
                     </div>
 
-                    <div class="modal-footer">
-                        <button class="btn btn-success" id="add-public-channel-btn">Add public group</button>
-                        <form id='add-public-channel'>
-                            <div class='form-group input-group'>
-                                <input id='public-channel' type='text' class='form-control'
-                                       placeholder='Enter channel name here'>
-
-                                <span class='input-group-btn'>
-                                    <button type='submit' class='btn btn-success'>Add</button>
-                                </span>
-                            </div>
-                        </form>
-
-                        <button class="btn btn-primary" id="add-private-channel-btn">Add private group</button>
-                        <form id='add-private-channel'>
-                            <div class='form-group input-group'>
-                                <input id='private-channel' type='text' class='form-control'
-                                       placeholder='Enter channel name here'>
-
-                                <span class='input-group-btn'>
-                                    <button type='submit' class='btn btn-primary'>Add</button>
-                                </span>
-                            </div>
-                        </form>
+                    <div id="modal-footer" class="modal-footer">
+                        <button class="btn btn-success" id="add-group-btn">Add new group</button>
                     </div>
 
                 </div>

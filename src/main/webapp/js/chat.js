@@ -129,7 +129,6 @@ $(document).ready(function () {
 
         $('#join-modal').click(function () {
             listAllGroups();
-            event.preventDefault();
         });
     }
 
@@ -145,17 +144,14 @@ $(document).ready(function () {
 // Show ALL Groups
     function listAllGroups() {
         callAjax("/ChatApp/app/group/all", "GET", null, "application/xml", updateAllGroup);
-        //addNewChannel();
     }
 
     // GET groups info
     function showGroups(groupName, quantity) {
-        var list = "Member(s):<br>";
+        var list = "Members:<br>";
         callAjax("/ChatApp/app/group/" + groupName, "GET", null, "application/xml", function (result) {
             $(result).find("email").each(function () {
-                console.log($(this).text());
                 list += $(this).text() + "<br>";
-                console.log(list);
             });
 
             if (!checkJoined(groupName)) {
@@ -205,7 +201,11 @@ $(document).ready(function () {
                 leaveGroup($(this).attr("href").slice(7));
             });
 
+            // Show group members
             $('[data-toggle="tooltip"]').tooltip({html:true});
+
+            // Add new group
+            addGroup();
         });
 
         return list;
@@ -214,62 +214,14 @@ $(document).ready(function () {
 
 // List all group to JOIN in ul
     function updateAllGroup(data) {
+        $('#modal-title').html("Group management");
         $("ul#all-group").html(" ");
+        $('#modal-footer').html("<button class='btn btn-success' id='add-group-btn'>Add new group</button>");
 
         $(data).find("group").each(function () {
             var groupName = $(this).find("name").text();
             var quantity = $(this).find("size").text();
             showGroups(groupName,quantity);
-
-            /*if (!checkJoined(groupName)) {
-                $("ul#all-group").append("\
-                <li class='left clearfix'>\
-                    <div class='chat-body clearfix'>\
-                        <div class='header'>\
-                            <strong class=primary-font'>" + groupName + "</strong>\
-                            \
-                            <div class='pull-right text-muted'>\
-                                <a href='#join-" + groupName + "' class='btn btn-danger join-group'>Join</a>\
-                            </div>\
-                        </div>\
-                        \
-                        <a href='#' data-toggle='tooltip' data-placement='right' data-original-title='" + members +"'>\
-                            <i class='fa fa-users'></i>" + quantity + "\
-                        </a>\
-                    </div>\
-                </li>");
-            }
-            else {
-                $("ul#all-group").append("\
-                <li class='left clearfix'>\
-                    <div class='chat-body clearfix'>\
-                        <div class='header'>\
-                            <strong class=primary-font'>" + groupName + "</strong>\
-                            \
-                            <div class='pull-right text-muted'>\
-                                <a href='#leave-" + groupName + "' class='btn btn-warning leave-group'>Leave</a>\
-                            </div>\
-                        </div>\
-                        \
-                        <a href='#' data-toggle='tooltip' data-placement='right' data-original-title='" + members +"'>\
-                            <i class='fa fa-users'></i>" + quantity + "\
-                        </a>\
-                    </div>\
-                </li>");
-            }
-
-            // Join group Event listener
-            $('.join-group').click(function () {
-                joinGroup($(this).attr("href").slice(6));
-            });
-
-            // Leave group Event listener
-            $('.leave-group').click(function () {
-                leaveGroup($(this).attr("href").slice(7));
-            });
-
-            $('[data-toggle="tooltip"]').tooltip({html:true});
-            */
         });
     }
 
@@ -541,41 +493,54 @@ $(document).ready(function () {
     }
 
 // Add new channel
-    function addNewChannel() {
-        $('#add-public-channel').hide();
-        $('#add-public-channel-btn').show();
+    function addGroup() {
+        $('#add-group-btn').click(function () {
+            $('#modal-title').html("Create a new group");
+            $('ul#all-group').html("\
+            <form id='add-group-form'>\
+                \
+                <div class='form-group'>\
+                    <label for='checkbox'>Group type</label>\
+                    <div class='onoffswitch'>\
+                        <input type='checkbox' name='onoffswitch' class='onoffswitch-checkbox' id='myonoffswitch' checked>\
+                        <label class='onoffswitch-label' for='myonoffswitch'>\
+                            <span class='onoffswitch-inner'></span>\
+                            <span class='onoffswitch-switch'></span>\
+                        </label>\
+                    </div>\
+                </div>\
+                \
+                <div class='form-group'>\
+                    <label for='group-name'>Group name</label>\
+                    <input id='group-name' class='form-control' type='text' placeholder='Enter group name here'>\
+                </div>\
+                \
+                <div class='form-group'>\
+                    <label for='invite-people'>Invite others to join (optional)</label>\
+                    <input id='invite-people' class='form-control' type='text' placeholder='Enter username here to invite'>\
+                </div>\
+            </form>\
+            ");
+            $('#modal-footer').html("<button id='create-group' type='submit' class='btn btn-danger'>Create group</button>");
 
-        $('#add-private-channel').hide();
-        $('#add-private-channel-btn').show();
+            var isPrivate = false;
 
-        $('#add-public-channel-btn').click(function () {
-            $('#add-public-channel').show();
-
-            $('#add-public-channel-btn').hide();
-            $('#add-private-channel-btn').hide();
-
-            $('#add-public-channel').on('submit', function (e) {
-                e.preventDefault();
-                //console.log($("#new-channel").val());
-                createPublicGroup($("#public-channel").val());
-                addNewChannel();
-                $("#public-channel").val("");
+            $('#myonoffswitch').click(function () {
+                isPrivate = !isPrivate;
             });
-        });
 
-
-        $('#add-private-channel-btn').click(function () {
-            $('#add-private-channel').show();
-
-            $('#add-private-channel-btn').hide();
-            $('#add-public-channel-btn').hide();
-
-            $('#add-private-channel').on('submit', function (e) {
-                e.preventDefault();
-                //console.log($("#new-channel").val());
-                createPrivateGroup($("#private-channel").val());
-                addNewChannel();
-                $("#private-channel").val("");
+            $('#create-group').click(function () {
+                var newGroup = $('#group-name').val();
+                if (isPrivate) {
+                    createPrivateGroup(newGroup);
+                    listJoinedGroups();
+                    listAllGroups();
+                    event.preventDefault();
+                }
+                else {
+                    createPublicGroup(newGroup);
+                    joinGroup(newGroup);
+                }
             });
         });
     }
