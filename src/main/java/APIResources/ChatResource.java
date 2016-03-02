@@ -132,7 +132,7 @@ public class ChatResource {
         if (tUser.getAsync() != null) {
             tUser.getAsync().resume(entry);
         }
-        
+        entry.getReadUser().add(originUser);
         
         h.addPrivateEntry(entry);
         h.save();
@@ -181,9 +181,10 @@ public class ChatResource {
         //         }
 
         //      });
-        users.get(user_idx).getAsync().resume(entry);
+        originUser.getAsync().resume(entry);
 
 // a thu cach
+        entry.getReadUser().add(originUser);
         h.addGroupEntry(entry);
         h.save();
         return Response.ok().build();
@@ -225,7 +226,7 @@ public class ChatResource {
         if (tUser.getAsync() != null) {
             tUser.getAsync().resume(entry);
         }
-
+        entry.getReadUser().add(originUser);
         h.addPrivateEntry(entry);
         h.save();
         return Response.status(200).entity(fileName).build();
@@ -274,7 +275,7 @@ public class ChatResource {
                 u.getAsync().resume(entry);
             }
         }
-
+        entry.getReadUser().add(originUser);
         h.addGroupEntry(entry);
         h.save();
         return Response.status(200).entity(fileName).build();

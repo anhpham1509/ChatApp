@@ -10,6 +10,7 @@ import Model.History;
 import Model.HistoryEntry;
 import Model.User;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.security.RolesAllowed;
@@ -51,9 +52,15 @@ public class GroupResource {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Set<Group> getAllGroups() {
-        return groups;
+        Set<Group> pgroups=new HashSet<>();
+        for(Group g:groups){
+            if(!g.isPrivate()){
+                pgroups.add(g);
+            }
+        }
+        return pgroups;
     }
-
+    
     @RolesAllowed({"Admin", "User"})
     @Path("{param}")
     @GET
@@ -170,17 +177,15 @@ public class GroupResource {
                 if (currentUser.getSubcriptions().add(g)) {
                     g.setSize(g.getSize() + 1);
                     for (User u : users) {
-                        if (u.getSubcriptions().contains(jg)) {
-                            if (u.getAsync() != null) {
-                                u.getAsync().resume(entry);
-                            }
+                        if (u.getSubcriptions().contains(g)&&(u.getAsync()!= null)) {
+                                u.getAsync().resume(entry);                            
                         }
-
                     }
-                }
                 h.addGroupEntry(entry);
                 h.save();
                 return Response.ok("ok").build();
+                }
+                
             }
         }
 
@@ -201,24 +206,19 @@ public class GroupResource {
         User currentUser = users.get(useridx);
         HistoryEntry entry = new HistoryEntry(new User("System"), lg.getName(), currentUser.getEmail() + " has leaved the group");
         for (Group g : groups) {
-            if (g.equals(lg) && !g.isPrivate()) {
+            if (g.equals(lg)) {
                 if (currentUser.getSubcriptions().remove(g)) {
-                    System.out.println("Vao dc day ko");
                     g.setSize(g.getSize() - 1);
-                    for (User u : users) {
-                        System.out.println("con day thi sao");
-                        if (u.getSubcriptions().contains(lg)) {
-                            System.out.println("Toi me day roi");
-                            if (u.getAsync() != null) {
-                                u.getAsync().resume(entry);
-                            }
+                    for (User u : users) {                        
+                        if (u.getSubcriptions().contains(g)&&u.getAsync() != null) {                            
+                                u.getAsync().resume(entry);                            
                         }
-
                     }
-                }
                 h.addGroupEntry(entry);
                 h.save();
                 return Response.ok("ok").build();
+                }
+                
             }
         }
         return Response.notAcceptable(null).build();
