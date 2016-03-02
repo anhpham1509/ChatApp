@@ -99,6 +99,7 @@ public class AlertResource {
         final User currentUser = users.get(user_idx);
         try {
             h.getAlerts().get(alertId - 1).getConfirmList().add(currentUser);
+            h.save();
             return Response.ok().build();
         } catch(Exception e) {
             e.printStackTrace();

@@ -9,6 +9,7 @@ var email = "";
 var inChatWith = "";
 var user = "";
 $(document).ready(function () {
+    $("#dialog").hide();
     getToken();
     if (localStorage.getItem('userToken')) {
         token = localStorage.getItem('userToken');
@@ -254,14 +255,11 @@ function updateHistory(data) {
     });
 }
 function handleNewMessage(data) {
+    console.log("newdata", data);
     if ($(data).find("alert").length > 0) {
-        var message = $(data).find("message").text();
-        var from = $(data).find("origin").text();
-        var time = new Date($(data).find("time").text());
-        var target = $(data).find("target").text();
-        alert("At "+time+":\n"+"From: "+from+"\nMessage: "+message);
+        displayAlert(data);
     }
-    
+
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
         var from = $(this).find("origin").text();
@@ -374,11 +372,45 @@ function auth(url) {
         }
     });
 }
-function getAlerts(){
+function getAlerts() {
     doAction("/ChatApp/app/alert", "GET", null, "application/xml", displayAlert);
 }
-function displayAlert(alerts){
-    
+function displayAlert(alerts) {
+    console.log("display", alerts);
+    if (!alerts) {
+        return;
+    }
+    $(alerts).find("alert").each(function (index) {
+        
+        var id = $(this).find("id").text();
+        var message = $(this).find("message").text();
+        var from = $(this).find("origin").text();
+        var time = new Date($(this).find("time").text());
+        $("#dialogs").append("<div id='dialog-"+index+"' title='Alert'><span class='ui-state-default'><span class='ui-icon ui-icon-info' style='float:left; margin:0 7px 0 0;'></span></span><p id='dialog-message-"+index+"'></p></div>");
+        $("#dialog-message-"+index).html("At: " + time + "<br>" + "From: " + from + "<br>Message: " + message);
+        $("#dialog-"+index).dialog({
+            modal: true,
+            draggable: false,
+            resizable: false,
+            show: 'blind',
+            hide: 'blind',
+            width: 400,
+            buttons: [
+                {
+                    text: "Confirm that i have read",
+                    icons: {
+                        primary: "ui-icon-check"
+                    },
+                    click: function () {
+                        var $this = $(this); 
+                        doAction("/ChatApp/app/alert/" + id, "POST", null, null, function () {
+                            $this.dialog("close");
+                        });
+                    }
+                }
+            ]
+        });
+    });
 }
 function login() {
     auth("/ChatApp/app/auth/login");
