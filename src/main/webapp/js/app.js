@@ -181,6 +181,9 @@ function listUserGroup() {
 function noftifai(data){
     alert(data);
 }
+function getUnread(){
+    doAction("/ChatApp/app/history/unread/", "POST", null, "application/xml",doSomethingElse);
+}
 function updateUser(data) {
     $("select[name=userlist]").html(" ");
     $(data).find("user").each(function () {

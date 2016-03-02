@@ -86,6 +86,7 @@
                 </select>
                 <input type="submit" value="Send Group Message" onclick="toGroupChat()"/>
                 <input type="submit" value="Leave" onclick="leaveGroup()"/>
+                <input type="submit" value="Unread" onclick="getUnread()"/>
             </div>   
         </div>
         <div class="container">

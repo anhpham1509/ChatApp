@@ -58,7 +58,7 @@ public class GroupResource {
                 pgroups.add(g);
             }
         }
-        return groups;
+        return pgroups;
     }
     
     @RolesAllowed({"Admin", "User"})
