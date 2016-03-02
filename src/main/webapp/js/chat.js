@@ -3,17 +3,20 @@ var email = localStorage.getItem('email');
 var target = "";
 var joinedGroups = [];
 
+
+
 $(document).ready(function () {
 
-    getToken();
-
-    //Insert Username
-    $('#username').html(email);
+    //getToken();
 
     listJoinedGroups();
     listAllUsers();
     feedMessage();
-    unreadMess();
+
+    //unreadMess();
+
+    //Insert Username
+    $('#username').html(email);
 
     // Hide post mess
     $('.send-message').hide();
@@ -91,6 +94,8 @@ $(document).ready(function () {
         $('.user').click(function () {
             getPrivateHistory($(this).attr("href").slice(1));
         });
+
+        unreadMess();
     }
 
 // Show Groups Users joined
@@ -123,6 +128,8 @@ $(document).ready(function () {
         $('#join-modal').click(function () {
             listAllGroups();
         });
+
+        unreadMess();
     }
 
 // Check joined allGroups
@@ -196,11 +203,6 @@ $(document).ready(function () {
 
             // Show group members
             $('[data-toggle="tooltip"]').tooltip({html:true});
-
-            // Add new group
-            addGroup();
-
-            event.preventDefault();
         });
     }
 
@@ -216,6 +218,9 @@ $(document).ready(function () {
             var quantity = $(this).find("size").text();
             showGroups(groupName,quantity);
         });
+
+        // Add new group
+        addGroup();
     }
 
 // Join group
@@ -527,14 +532,13 @@ $(document).ready(function () {
                 var newGroup = $('#group-name').val();
                 if (isPrivate) {
                     createPrivateGroup(newGroup);
-                    listJoinedGroups();
-                    listAllGroups();
-                    event.preventDefault();
                 }
                 else {
                     createPublicGroup(newGroup);
-                    joinGroup(newGroup);
                 }
+                listJoinedGroups();
+                listAllGroups();
+                event.preventDefault();
             });
         });
     }
@@ -564,8 +568,21 @@ $(document).ready(function () {
 
     // Unread mess
     function unreadMess() {
-        callAjax("/ChatApp/history/unread/", "GET", null, "application/xml", function(data){
-            console.log(data);
+        callAjax("/ChatApp/app/history/unread", "GET", null, "text", function(data){
+            var newMess = "Hello new man";
+            console.log(newMess);
+            var unreads = data.split("|");
+            console.log(unreads);
+            for (var unread in unreads){
+                var info = unread.split(":");
+                console.log(info);
+                if (info[0].startsWith("@")){
+                    $("a.user[href='#" + info[0] + "'] > span.badge").html(info[1]);
+                }
+                else {
+                    $("a.group[href='#" + info[0] + "'] > span.badge").html(info[1]);
+                }
+            }
         });
     }
 

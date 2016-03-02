@@ -88,7 +88,7 @@ public class HistoryResource {
 
     @RolesAllowed({"Admin", "User"})
     @Path("/unread/")
-    @POST
+    @GET
     @Produces(MediaType.APPLICATION_XML)
     public Response getUnreadStatus(@Context HttpServletRequest request) {
         int user_idx = (int) request.getAttribute("useridx");
