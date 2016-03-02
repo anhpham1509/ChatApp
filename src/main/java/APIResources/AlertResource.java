@@ -90,13 +90,22 @@ public class AlertResource {
         }
     }
 
-//    @PermitAll
-//    @GET
-//    @Path("{alertId}")
-//    @Produces(MediaType.APPLICATION_XML)
-//    public Alert getAlert(@Context HttpServletRequest request, @PathParam("alertId") int alertId) {
-//        return h.getAlerts().get(alertId - 1);
-//    }
+    @RolesAllowed({"Admin","User"})
+    @POST
+    @Path("{alertId}")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response confirmAlert(@Context HttpServletRequest request, @PathParam("alertId") int alertId) {
+        int user_idx = (int) request.getAttribute("useridx");
+        final User currentUser = users.get(user_idx);
+        try {
+            h.getAlerts().get(alertId - 1).getConfirmList().add(currentUser);
+            return Response.ok().build();
+        } catch(Exception e) {
+            e.printStackTrace();
+            return Response.status(500).entity(e).build();
+        }
+    }
+    
     @RolesAllowed({"Admin","User"})
     @GET
     @Produces(MediaType.APPLICATION_XML)
@@ -108,7 +117,7 @@ public class AlertResource {
         for (Alert alert : alerts) {
             String[] userList = alert.getTargetList().replaceAll(" ", "").split(",");
             for (String username : userList) {
-                if (currentUser.getEmail().equals(username)) {
+                if (currentUser.getEmail().equals(username) && !alert.getConfirmList().contains(currentUser)) {
                     composedList.add(alert);
                 }
             }

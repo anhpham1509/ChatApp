@@ -375,7 +375,10 @@ function auth(url) {
     });
 }
 function getAlerts(){
-    doAction("/ChatApp/app/alert", "GET", null, "application/xml", function(data){console.log(data)});
+    doAction("/ChatApp/app/alert", "GET", null, "application/xml", displayAlert);
+}
+function displayAlert(alerts){
+    
 }
 function login() {
     auth("/ChatApp/app/auth/login");

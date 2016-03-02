@@ -96,7 +96,7 @@ public class Alert implements Serializable {
         return confirmList;
     }
 
-    @XmlElement
+    @XmlTransient
     public void setConfirmList(Set<User> confirmList) {
         this.confirmList = confirmList;
     }
