@@ -43,7 +43,8 @@ public class History implements Serializable{
             synchronized (History.class) {
                 if (instance == null) {
                     instance = new History();
-                    History.getInstance().restore();
+                    instance.restore();
+                    instance.createAdmin();
                 }
             }
 
@@ -51,7 +52,15 @@ public class History implements Serializable{
         return instance;
 
     }
-
+    private void createAdmin(){
+        for(User u:users){
+            if(u.getEmail().equals("admin")){
+                return;
+            }
+        }
+        User admin = new User("admin","admin","Admin");
+        this.users.add(admin);
+    }
 
     public void addUser(User u){
         users.add(u);
