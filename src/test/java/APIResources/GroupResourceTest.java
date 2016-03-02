@@ -151,8 +151,10 @@ public class GroupResourceTest {
      */
     @Test
     public void testJoin() {
+        
         System.out.println("join");
         Group g = new Group("test2");
+        users.get(users.size()-2).getSubcriptions().remove(g);
         request.setAttribute("useridx",users.size()-2);
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok("ok").build();
