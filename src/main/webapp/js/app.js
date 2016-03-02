@@ -182,7 +182,7 @@ function noftifai(data){
     alert(data);
 }
 function getUnread(){
-    doAction("/ChatApp/app/history/unread/", "POST", null, "application/xml",doSomethingElse);
+    doAction("/ChatApp/app/history/unread/", "GET", null, "application/xml",doSomethingElse);
 }
 function updateUser(data) {
     $("select[name=userlist]").html(" ");
