@@ -12,13 +12,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  *
@@ -27,14 +25,17 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class History implements Serializable{
 
     private static History instance = null;
-    private CopyOnWriteArrayList<HistoryEntry> entries;
 
+    private CopyOnWriteArrayList<HistoryEntry> groupEntries;
+    private CopyOnWriteArrayList<HistoryEntry> privateEntries;
     private CopyOnWriteArrayList<User> users;
     private Set<Group> groups;
     private History() {
-        entries =new CopyOnWriteArrayList<>();
+
         users =new CopyOnWriteArrayList<>();
         groups=Collections.synchronizedSet(new HashSet<Group>()); 
+        groupEntries=new CopyOnWriteArrayList<>();
+        privateEntries=new CopyOnWriteArrayList<>();
     }
 
     public static History getInstance() {
@@ -51,29 +52,33 @@ public class History implements Serializable{
 
     }
 
-    public void addEntry(HistoryEntry e) {
-        entries.add(e);
-    }
 
-    public List<HistoryEntry> getEntries() {
-        return entries;
+    public void addUser(User u){
+        users.add(u);
     }
-
     public List<User> getUsers() {
         return users;
-    }
-
-    public void addUser(User u) {
-        this.users.add(u);
     }
 
     public Set<Group> getGroups() {
         return groups;
     }
- /*   public void addGroup(Group g) {
-        this.groups.add(g);
+    public void addGroupEntry(HistoryEntry e) {
+        groupEntries.add(e);
     }
-*/
+    public void addPrivateEntry(HistoryEntry e) {
+        privateEntries.add(e);
+    }
+
+    public CopyOnWriteArrayList<HistoryEntry> getGroupEntries() {
+        return groupEntries;
+    }
+
+    public CopyOnWriteArrayList<HistoryEntry> getPrivateEntries() {
+        return privateEntries;
+    }
+
+
   
     private void restore() {
         try {
@@ -101,12 +106,9 @@ public class History implements Serializable{
             obout.close();
         } catch (FileNotFoundException e) {
             System.out.println("Could not open game.ser");
-            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Error writing into file");
-            e.printStackTrace();
         }
-
     }
 
 }

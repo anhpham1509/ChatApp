@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 public class GroupResourceTest {
     private History h=History.getInstance();
     private List<User> users = h.getUsers();
-    private List<HistoryEntry> entries=h.getEntries();
+
     @Context
     private HttpServletRequest request = new TestHttpServletRequest();
     public GroupResourceTest() {
@@ -45,7 +45,7 @@ public class GroupResourceTest {
     
     @Before
     public void setUp() {
-        System.out.println("Entries size:"+entries.size());
+
         User u = new User("beochot@gmail.com","1234","user");
         u.setAsync(new TestAsyncResponse());
         User u2 =new User("beochot2@gmail.com","1234","user");
@@ -70,6 +70,7 @@ public class GroupResourceTest {
     
     @After
     public void tearDown() {
+       
     }
 
     /**
@@ -82,6 +83,7 @@ public class GroupResourceTest {
         request.setAttribute("useridx",users.size()-2);
         Set<Group> expResult = users.get(users.size()-2).getSubcriptions();
         Set<Group> result = instance.getJoinedGroups(request);
+        
         assertEquals(expResult, result);
         
     }
@@ -155,6 +157,7 @@ public class GroupResourceTest {
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok("ok").build();
         Response result = instance.join(g, request);
+        h.getGroupEntries().remove(h.getGroupEntries().size()-1);
         assertEquals(expResult.getStatus(), result.getStatus());
     }
     @Test
@@ -188,6 +191,7 @@ public class GroupResourceTest {
         GroupResource instance = new GroupResource();
         Response expResult = Response.ok("ok").build();
         Response result = instance.leave(g, request);
+        h.getGroupEntries().remove(h.getGroupEntries().size()-1);
         assertEquals(expResult.getStatus(), result.getStatus());
     }
     @Test

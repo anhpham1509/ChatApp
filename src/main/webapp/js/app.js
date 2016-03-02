@@ -195,26 +195,30 @@ function updateUserGroup(data) {
     $(data).find("group").each(function () {
 
         //var value = $(this).find('name').attr('value');
-        $("select[name=joinedgrouplist]").append("<option>" + this.innerHTML + "</option>");
+        $("select[name=joinedgrouplist]").append("<option>" + $(this).find("name").text() + "</option>");
     });
 
 }
 function updateGroup(data) {
     $("select[name=grouplist]").html(" ");
     $(data).find("group").each(function () {
-
-        //var value = $(this).find('name').attr('value');
-        $("select[name=grouplist]").append("<option>" + this.innerHTML + "</option>");
+        $("select[name=grouplist]").append("<option>" + $(this).find("name").text() + "</option>");
     });
 
 }
 function joinGroup() {
     doAction("/ChatApp/app/group/join/", "POST", "<group><name>" + $("select[name=grouplist]").val() + "</name></group>", "application/xml", doSomething);
 }
+function leaveGroup() {
+    doAction("/ChatApp/app/group/leave/", "POST", "<group><name>" + $("select[name=grouplist]").val() + "</name></group>", "application/xml", doSomething);
+}
 function doSomething(data) {
     $("#response").html(" ");
-
+    doAction("/ChatApp/app/group/"+$("select[name=grouplist]").val(), "GET", null, "application/xml", doSomethingElse);
     alert(data);
+}
+function doSomethingElse(data){
+    console.log(data);
 }
 function updateHistory(data) {
     console.log(data);

@@ -28,7 +28,8 @@ import static org.junit.Assert.*;
 public class ChatResourceTest {
     private History h=History.getInstance();
     private List<User> users = h.getUsers();
-    private List<HistoryEntry> entries=h.getEntries();
+    private List<HistoryEntry> privateEntries=h.getPrivateEntries();
+    private List<HistoryEntry> groupEntries=h.getGroupEntries();
     @Context
     private HttpServletRequest request = new TestHttpServletRequest();
     public ChatResourceTest() {
@@ -44,7 +45,7 @@ public class ChatResourceTest {
     
     @Before
     public void setUp() {
-        System.out.println("Entries size:"+entries.size());
+
         User u = new User("beochot@gmail.com","1234","user");
         u.setAsync(new TestAsyncResponse());
         User u2 =new User("beochot2@gmail.com","1234","user");
@@ -100,9 +101,8 @@ public class ChatResourceTest {
         ChatResource instance = new ChatResource();
         Response expResult = Response.ok().build();
         Response result = instance.chatToPrivate(e, targetPrivate, request);
-        System.out.println("Entries size before:"+entries.size());
-        entries.remove(entries.size()-1);
-        System.out.println("Entries size :"+entries.size());
+
+        privateEntries.remove(privateEntries.size()-1);
         assertEquals(expResult.getStatus(), result.getStatus());
 
     }
@@ -155,10 +155,9 @@ public class ChatResourceTest {
         ChatResource instance = new ChatResource();
         Response expResult = Response.ok().build();
         Response result = instance.chatToGroup(e, param, request);
-        System.out.println("Entries size before:"+entries.size());
-        entries.remove(e);
-        System.out.println("Entries size after:"+entries.size());
-        entries.remove(entries.size()-1);
+        System.out.println("Entries size before:"+groupEntries.size());
+        groupEntries.remove(e);
+        groupEntries.remove(groupEntries.size()-1);
         assertEquals(expResult.getStatus(), result.getStatus());
         
        

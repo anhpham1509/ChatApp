@@ -30,7 +30,10 @@ public class User implements Serializable{
 
     private transient AsyncResponse async;
     public User() {
-        subcriptions= new HashSet<>(); 
+        this.subcriptions= new HashSet<>(); 
+    }
+    public User(String email) {
+        this.email= email; 
     }
 
     public User(String email, String password, String role) {
