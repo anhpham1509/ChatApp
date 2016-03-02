@@ -101,10 +101,5 @@
         </div>
     </body>
     <div id="dialogs">
-        <div id="dialog" title="Alert">
-            <span class="ui-state-default"><span class="ui-icon ui-icon-info" style="float:left; margin:0 7px 0 0;"></span></span>
-            <p id="dialog-message">This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-        </div>
     </div>
-</div>
 </html>

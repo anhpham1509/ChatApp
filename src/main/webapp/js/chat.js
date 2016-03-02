@@ -12,7 +12,7 @@ $(document).ready(function () {
     listJoinedGroups();
     listAllUsers();
     feedMessage();
-
+    getAlerts();
     //unreadMess();
 
     //Insert Username
@@ -166,13 +166,12 @@ $(document).ready(function () {
                             </div>\
                         </div>\
                         \
-                        <a href='#' data-toggle='tooltip' data-placement='right' data-original-title='" + list +"'>\
+                        <a href='#' data-toggle='tooltip' data-placement='right' data-original-title='" + list + "'>\
                             <i class='fa fa-users'></i>" + quantity + "\
                         </a>\
                     </div>\
                 </li>");
-            }
-            else {
+            } else {
                 $("ul#all-group").append("\
                 <li class='left clearfix'>\
                     <div class='chat-body clearfix'>\
@@ -184,7 +183,7 @@ $(document).ready(function () {
                             </div>\
                         </div>\
                         \
-                        <a href='#' data-toggle='tooltip' data-placement='right' data-original-title='" + list +"'>\
+                        <a href='#' data-toggle='tooltip' data-placement='right' data-original-title='" + list + "'>\
                             <i class='fa fa-users'></i>" + quantity + "\
                         </a>\
                     </div>\
@@ -202,7 +201,7 @@ $(document).ready(function () {
             });
 
             // Show group members
-            $('[data-toggle="tooltip"]').tooltip({html:true});
+            $('[data-toggle="tooltip"]').tooltip({html: true});
         });
     }
 
@@ -216,7 +215,7 @@ $(document).ready(function () {
         $(data).find("group").each(function () {
             var groupName = $(this).find("name").text();
             var quantity = $(this).find("size").text();
-            showGroups(groupName,quantity);
+            showGroups(groupName, quantity);
         });
 
         // Add new group
@@ -226,10 +225,10 @@ $(document).ready(function () {
 // Join group
     function joinGroup(group) {
         callAjax("/ChatApp/app/group/join/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
-            function () {
-                listJoinedGroups();
-                listAllGroups();
-            });
+                function () {
+                    listJoinedGroups();
+                    listAllGroups();
+                });
         event.preventDefault();
 
     }
@@ -237,10 +236,10 @@ $(document).ready(function () {
 // Leave group
     function leaveGroup(group) {
         callAjax("/ChatApp/app/group/leave/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
-            function () {
-                listJoinedGroups();
-                listAllGroups();
-            });
+                function () {
+                    listJoinedGroups();
+                    listAllGroups();
+                });
         event.preventDefault();
     }
 
@@ -256,8 +255,7 @@ $(document).ready(function () {
             if (fileType === 'image') {
                 var imgMess = "<img src='images/" + filePath + "'/>";
                 $("ul#chat").append(newMessage(email, formatTime(time), imgMess));
-            }
-            else {
+            } else {
                 $("ul#chat").append(newMessage(email, formatTime(time), message));
             }
 
@@ -288,8 +286,7 @@ $(document).ready(function () {
                     if (to.slice(1) == email) {
                         if (from === target.slice(1)) {
                             $("ul#chat").append(newMessage(from, formatTime(time), imgMess));
-                        }
-                        else {
+                        } else {
                             //badge into user that send mess
 
                             //console.log(from + "is different from: " + target.slice(1));
@@ -300,8 +297,7 @@ $(document).ready(function () {
                                 //console.log("Current: 0");
                                 $("a.user[href='#" + from + "'] > span.badge").html("1");
                                 //console.log("Switch to: 1");
-                            }
-                            else {
+                            } else {
                                 newMessCount = parseInt(newMessCount);
                                 //console.log("Current: " + newMessCount);
                                 newMessCount += 1;
@@ -310,13 +306,11 @@ $(document).ready(function () {
                             }
                         }
                     }
-                }
-                else { // group chat
+                } else { // group chat
                     //console.log(to + ": *to");
                     if (to == target) {
                         $("ul#chat").append(newMessage(from, formatTime(time), imgMess));
-                    }
-                    else {
+                    } else {
                         //badge into group that send mess
 
                         //console.log(to + "is different from: " + target.slice(1));
@@ -327,8 +321,7 @@ $(document).ready(function () {
                             //console.log("Current: 0");
                             $("a.group[href='#" + to + "'] > span.badge").html("1");
                             //console.log("Switch to: 1");
-                        }
-                        else {
+                        } else {
                             newMessCount = parseInt(newMessCount);
                             //console.log("Current: " + newMessCount);
                             newMessCount += 1;
@@ -343,8 +336,7 @@ $(document).ready(function () {
                 if (!to) {
                     $("ul#chat").append(newMessage(from, formatTime(time), message));
                     //console.log(to + ": !to");
-                }
-                else {
+                } else {
                     //console.log(to + ": to");
                     if (to.startsWith("@")) { //private chat
                         //console.log(to + ": @to");
@@ -353,8 +345,7 @@ $(document).ready(function () {
                         if (to.slice(1) == email) {
                             if (from === target.slice(1)) {
                                 $("ul#chat").append(newMessage(from, formatTime(time), message));
-                            }
-                            else {
+                            } else {
                                 //badge into user that send mess
 
                                 //console.log(from + "is different from: " + target.slice(1));
@@ -365,8 +356,7 @@ $(document).ready(function () {
                                     //console.log("Current: 0");
                                     $("a.user[href='#" + from + "'] > span.badge").html("1");
                                     //console.log("Switch to: 1");
-                                }
-                                else {
+                                } else {
                                     newMessCount = parseInt(newMessCount);
                                     //console.log("Current: " + newMessCount);
                                     newMessCount += 1;
@@ -375,13 +365,11 @@ $(document).ready(function () {
                                 }
                             }
                         }
-                    }
-                    else { // group chat
+                    } else { // group chat
                         //console.log(to + ": *to");
                         if (to == target) {
                             $("ul#chat").append(newMessage(from, formatTime(time), message));
-                        }
-                        else {
+                        } else {
                             //badge into group that send mess
 
                             //console.log(to + "is different from: " + target.slice(1));
@@ -392,8 +380,7 @@ $(document).ready(function () {
                                 //console.log("Current: 0");
                                 $("a.group[href='#" + to + "'] > span.badge").html("1");
                                 //console.log("Switch to: 1");
-                            }
-                            else {
+                            } else {
                                 newMessCount = parseInt(newMessCount);
                                 //console.log("Current: " + newMessCount);
                                 newMessCount += 1;
@@ -437,8 +424,7 @@ $(document).ready(function () {
 
         if (today.getDate() !== date) {
             return formatDigits(date) + "/" + formatDigits(month);
-        }
-        else {
+        } else {
             return formatDigits(time.getHours()) + ":" + formatDigits(time.getMinutes().toString());
         }
     }
@@ -447,8 +433,7 @@ $(document).ready(function () {
     function formatDigits(number) {
         if (number < 9) {
             return "0" + number.toString();
-        }
-        else {
+        } else {
             return number.toString();
         }
     }
@@ -532,8 +517,7 @@ $(document).ready(function () {
                 var newGroup = $('#group-name').val();
                 if (isPrivate) {
                     createPrivateGroup(newGroup);
-                }
-                else {
+                } else {
                     createPublicGroup(newGroup);
                 }
                 listJoinedGroups();
@@ -546,18 +530,18 @@ $(document).ready(function () {
 // Create new public group
     function createPublicGroup(group) {
         callAjax("/ChatApp/app/group/createPublic/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
-            function () {
-                joinGroup(group);
-            });
+                function () {
+                    joinGroup(group);
+                });
     }
 
 // Create new private group
     function createPrivateGroup(group) {
         callAjax("/ChatApp/app/group/createPrivate/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
-            function () {
-                // Select people to join this group
-                //joinGroup(group);
-            });
+                function () {
+                    // Select people to join this group
+                    //joinGroup(group);
+                });
     }
 
 // Prepare xml to POST
@@ -568,18 +552,17 @@ $(document).ready(function () {
 
     // Unread mess
     function unreadMess() {
-        callAjax("/ChatApp/app/history/unread", "GET", null, "text", function(data){
+        callAjax("/ChatApp/app/history/unread", "GET", null, "text", function (data) {
             var newMess = "Hello new man";
             console.log(newMess);
             var unreads = data.split("|");
             console.log(unreads);
-            for (var unread in unreads){
+            for (var unread in unreads) {
                 var info = unread.split(":");
                 console.log(info);
-                if (info[0].startsWith("@")){
+                if (info[0].startsWith("@")) {
                     $("a.user[href='#" + info[0] + "'] > span.badge").html(info[1]);
-                }
-                else {
+                } else {
                     $("a.group[href='#" + info[0] + "'] > span.badge").html(info[1]);
                 }
             }
@@ -633,6 +616,71 @@ function sendImage() {
         }
     });
 
+// Send alert
+    function sendAlert() {
+        console.log($("select[name=userlist]").val());
+        var xml = "<alert><time>null</time><origin>" + "<email>" + user + "</email>" + "</origin>" + "<targetList>" + $("select[name=userlist]").val() + "</targetList><message>" + $("#alertMessage").val() + "</message></alert>";
+        console.log(xml);
+        $.ajax({
+            url: '/ChatApp/app/alert',
+            method: "POST",
+            contentType: "application/xml",
+            data: xml,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", token);
+            },
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+// Get alerts when logging in
+    function getAlerts() {
+        doAction("/ChatApp/app/alert", "GET", null, "application/xml", displayAlert);
+    }
+
+// Dislay alert
+    function displayAlert(alerts) {
+        console.log("display", alerts);
+        if (!alerts) {
+            return;
+        }
+        $(alerts).find("alert").each(function (index) {
+
+            var id = $(this).find("id").text();
+            var message = $(this).find("message").text();
+            var from = $(this).find("origin").text();
+            var time = new Date($(this).find("time").text());
+            $("#dialogs").append("<div id='dialog-" + index + "' title='Alert'><span class='ui-state-default'><span class='ui-icon ui-icon-info' style='float:left; margin:0 7px 0 0;'></span></span><p id='dialog-message-" + index + "'></p></div>");
+            $("#dialog-message-" + index).html("At: " + time + "<br>" + "From: " + from + "<br>Message: " + message);
+            $("#dialog-" + index).dialog({
+                modal: true,
+                draggable: false,
+                resizable: false,
+                show: 'blind',
+                hide: 'blind',
+                width: 400,
+                buttons: [
+                    {
+                        text: "Confirm that i have read",
+                        icons: {
+                            primary: "ui-icon-check"
+                        },
+                        click: function () {
+                            var $this = $(this);
+                            doAction("/ChatApp/app/alert/" + id, "POST", null, null, function () {
+                                $this.dialog("close");
+                            });
+                        }
+                    }
+                ]
+            });
+        });
+    }
 }
 
 

@@ -17,6 +17,10 @@
         <!-- Chat CSS -->
         <link href="css/chat.css" rel="stylesheet">
 
+        <!--Jquery-UI css-->
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.theme.css">
+
         <!-- Custom Fonts -->
         <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
@@ -29,13 +33,14 @@
 
         <!-- Authentication -->
         <script type="text/javascript">
-            if (! localStorage.getItem('token')) {
+            if (!localStorage.getItem('token')) {
                 location.assign(location.origin + '/ChatApp/');
             }
         </script>
 
         <!-- jQuery -->
         <script src="js/jquery-1.12.0.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.js"></script>
 
         <!-- Custom jQuery -->
         <script src="js/chat.js"></script>
@@ -376,41 +381,41 @@
 
             <form class="send-message">
                 <div class="form-group input-group">
-                        <div class="input-group-btn"> <!-- dropup"> -->
-                            <button type="button" class="btn btn-default fileUpload"> <!--dropdown-toggle" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-plus"></i>-->
-                                <i class="fa fa-fw fa-picture-o"></i>
-                                <input id="send-image" type="file" class="upload" accept="image/*" onchange="sendImage();">
-                                <!--
-                                <script>
-                                    var loadImage = function(event) {
-                                        $('#send-image').popover({
-                                            html: true,
-                                            trigger: '',
-                                            placement: 'top',
-                                            content: function(){
-                                                return '<img src="' + URL.createObjectURL(event.target.files[0]) + '" />'
-                                            }
-                                        });
-                                        console.log(event.target.files);
-                                        $('#send-image').popover('show');
-                                        //var output = document.getElementById('preview-image');
-                                        //output.src = URL.createObjectURL(event.target.files[0]);
-                                    };
-                                </script>-->
-                            </button>
-                            <!--<ul class="dropdown-menu">
-                                <li><a href="#"><i class="fa fa-fw fa-picture-o"></i> Picture</a></li>
-                                <li><a href="#"><i class="fa fa-fw fa-file"></i> File</a></li>
-                            </ul>-->
-                        </div>
+                    <div class="input-group-btn"> <!-- dropup"> -->
+                        <button type="button" class="btn btn-default fileUpload"> <!--dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-plus"></i>-->
+                            <i class="fa fa-fw fa-picture-o"></i>
+                            <input id="send-image" type="file" class="upload" accept="image/*" onchange="sendImage();">
+                            <!--
+                            <script>
+                                var loadImage = function(event) {
+                                    $('#send-image').popover({
+                                        html: true,
+                                        trigger: '',
+                                        placement: 'top',
+                                        content: function(){
+                                            return '<img src="' + URL.createObjectURL(event.target.files[0]) + '" />'
+                                        }
+                                    });
+                                    console.log(event.target.files);
+                                    $('#send-image').popover('show');
+                                    //var output = document.getElementById('preview-image');
+                                    //output.src = URL.createObjectURL(event.target.files[0]);
+                                };
+                            </script>-->
+                        </button>
+                        <!--<ul class="dropdown-menu">
+                            <li><a href="#"><i class="fa fa-fw fa-picture-o"></i> Picture</a></li>
+                            <li><a href="#"><i class="fa fa-fw fa-file"></i> File</a></li>
+                        </ul>-->
+                    </div>
                     <input id="message" type="text" class="form-control" placeholder="Enter message here">
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-default">
-                                <i class="fa fa-send"></i>
-                            </button>
-                        </span>
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default">
+                            <i class="fa fa-send"></i>
+                        </button>
+                    </span>
                 </div>
             </form>
 
