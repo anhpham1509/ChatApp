@@ -11,7 +11,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.theme.css">
         <script type="text/javascript" src="js/jquery-1.12.0.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/app.js"></script>
         <script src="//cdn.auth0.com/js/lock-8.2.min.js"></script>
 
@@ -61,12 +64,13 @@
             <div class="container">
                 <br>
                 User List
-                <select name="userlist" >
+                <select name="userlist" multiple>
 
                 </select>
                 <input type="submit" value="Send Private Message" onclick="toSingleChat()"/>
                 <input type="submit" value="Promote User" onclick="promoteUser()"/>
-                
+                <input type="text" placeholder="Enter alert" id="alertMessage"/>
+                <input type="submit" value="Send alert" onclick="sendAlert()"/>
             </div>
             <div class="container">
                 <br>
@@ -96,4 +100,11 @@
             <button id="authTest">Secured REST resource</button>
         </div>
     </body>
+    <div id="dialogs">
+        <div id="dialog" title="Alert">
+            <span class="ui-state-default"><span class="ui-icon ui-icon-info" style="float:left; margin:0 7px 0 0;"></span></span>
+            <p id="dialog-message">This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+        </div>
+    </div>
+</div>
 </html>

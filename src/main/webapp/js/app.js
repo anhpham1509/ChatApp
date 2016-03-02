@@ -3,16 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-var isLoggedIn=false;
+var isLoggedIn = false;
+var globalToken = token = "";
+var email = "";
+var inChatWith = "";
+var user = "";
 $(document).ready(function () {
-    var globalToken = token = "";
-    var email = "";
-    var inChatWith = "";
-    var user = "";
-    
-
+    $("#dialog").hide();
     getToken();
-
     if (localStorage.getItem('userToken')) {
         token = localStorage.getItem('userToken');
     }
@@ -34,7 +32,26 @@ $(document).ready(function () {
         });
     });
 });
-
+function sendAlert() {
+    console.log($("select[name=userlist]").val());
+    var xml = "<alert><time>null</time><origin>" + "<email>" + user + "</email>" + "</origin>" + "<targetList>" + $("select[name=userlist]").val() + "</targetList><message>" + $("#alertMessage").val() + "</message></alert>";
+    console.log(xml);
+    $.ajax({
+        url: '/ChatApp/app/alert',
+        method: "POST",
+        contentType: "application/xml",
+        data: xml,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", token);
+        },
+        success: function (result) {
+            console.log(result);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+}
 function sendImage() {
     var sendingUrl;
     console.log("in" + inChatWith);
@@ -157,14 +174,14 @@ function groupChat() {
     });
 }
 function promoteUser() {
-    doAction("/ChatApp/app/user/promote/", "POST", "<user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user>", "application/xml", noftifai);
+    doAction("/ChatApp/app/user/promote/", "POST", "<user>" + "<email>" + $("select[name=userlist]").val() + "</email>" + "</user>", "application/xml", noftifai);
 }
 function createPrivateGroup() {
     doAction("/ChatApp/app/group/createPrivate/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
 }
 //Temporarily one user can add more user to users tag in real front end
-function addUserPrivate(){
-    doAction("/ChatApp/app/group/addUser/"+$("select[name=grouplist]").val(), "POST", "<users><user>" +"<email>" + $("select[name=userlist]").val() +"</email>"+ "</user></users>", "application/xml", noftifai);
+function addUserPrivate() {
+    doAction("/ChatApp/app/group/addUser/" + $("select[name=grouplist]").val(), "POST", "<users><user>" + "<email>" + $("select[name=userlist]").val() + "</email>" + "</user></users>", "application/xml", noftifai);
 }
 function createGroup() {
     doAction("/ChatApp/app/group/createPublic/", "POST", "<group><name>" + $("input[name=groupName]").val() + "</name></group>", "application/xml", listGroup);
@@ -178,7 +195,7 @@ function listUser() {
 function listUserGroup() {
     doAction("/ChatApp/app/group/", "GET", null, "application/xml", updateUserGroup);
 }
-function noftifai(data){
+function noftifai(data) {
     alert(data);
 }
 function getUnread(){
@@ -245,7 +262,11 @@ function updateHistory(data) {
     });
 }
 function handleNewMessage(data) {
-    console.log(data);
+    console.log("newdata", data);
+    if ($(data).find("alert").length > 0) {
+        displayAlert(data);
+    }
+
     $(data).find("historyEntry").each(function (n) {
         var message = $(this).find("messsage").text();
         var from = $(this).find("origin").text();
@@ -267,10 +288,10 @@ function onImageSuccess(from, message, time, target, filePath, fileType) {
         return;
     }
 
-    if(!target){
+    if (!target) {
         $("#response").append('<tr><td class="received">' + time.toString() + " : " + from + " uploaded : " + "<img src='images/" + filePath + "'/></td></tr>");
     }
-    
+
     // in group chat
     if (!target.startsWith("@")) {
         if (target !== inChatWith) {
@@ -290,7 +311,7 @@ function onImageSuccess(from, message, time, target, filePath, fileType) {
 
 function onMessageSuccess(from, message, time, target) {
     console.log("in chat with: " + inChatWith + from + target);
-    if(!target){
+    if (!target) {
         $("#response").append('<tr><td class="received">' + time.toString() + " : " + from + " said : " + message + '</td></tr>');
     }
 
@@ -345,23 +366,64 @@ function auth(url) {
             email = temp;
             token = result;
             localStorage.setItem('userToken', token);
+            getAlerts();
             listGroup();
             listUser();
             listUserGroup();
-            if(!isLoggedIn)
+            if (!isLoggedIn)
                 feedMessage();
-            isLoggedIn=true;
+            isLoggedIn = true;
         },
         failure: function (result) {
             alert(result);
         }
     });
 }
+function getAlerts() {
+    doAction("/ChatApp/app/alert", "GET", null, "application/xml", displayAlert);
+}
+function displayAlert(alerts) {
+    console.log("display", alerts);
+    if (!alerts) {
+        return;
+    }
+    $(alerts).find("alert").each(function (index) {
+        
+        var id = $(this).find("id").text();
+        var message = $(this).find("message").text();
+        var from = $(this).find("origin").text();
+        var time = new Date($(this).find("time").text());
+        $("#dialogs").append("<div id='dialog-"+index+"' title='Alert'><span class='ui-state-default'><span class='ui-icon ui-icon-info' style='float:left; margin:0 7px 0 0;'></span></span><p id='dialog-message-"+index+"'></p></div>");
+        $("#dialog-message-"+index).html("At: " + time + "<br>" + "From: " + from + "<br>Message: " + message);
+        $("#dialog-"+index).dialog({
+            modal: true,
+            draggable: false,
+            resizable: false,
+            show: 'blind',
+            hide: 'blind',
+            width: 400,
+            buttons: [
+                {
+                    text: "Confirm that i have read",
+                    icons: {
+                        primary: "ui-icon-check"
+                    },
+                    click: function () {
+                        var $this = $(this); 
+                        doAction("/ChatApp/app/alert/" + id, "POST", null, null, function () {
+                            $this.dialog("close");
+                        });
+                    }
+                }
+            ]
+        });
+    });
+}
 function login() {
     auth("/ChatApp/app/auth/login");
 }
 function logout() { //Tam null callback
-    doAction("/ChatApp/app/auth/logout/", "GET", null, null,null);
+    doAction("/ChatApp/app/auth/logout/", "GET", null, null, null);
 }
 function register() {
     auth("/ChatApp/app/auth/register");
