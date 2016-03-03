@@ -40,12 +40,14 @@ $(document).ready(function () {
         window.location = location.origin + '/ChatApp/';
     });
 
-    $("#openAlert").click(function () {
+    $("#openAlert").click(function (e) {
         console.log("in alert", isAdmin);
         if (!isAdmin) {
             alert("Only admins could send alerts !");
+            e.stopPropagation();
         }
     });
+
 
     $("#sendAlert").click(function () {
         console.log($("#alertList").val());
@@ -154,6 +156,13 @@ $(document).ready(function () {
                 data-toggle='modal' data-target='#user-mgmt-modal'>\
                 Management\
             </button>");
+        $("#user-mgmt").click(function (e) {
+            console.log("in user");
+            if (!isAdmin) {
+                alert("Only admins could manage users !");
+                e.stopPropagation();
+            }
+        });
         $(data).find("email").each(function () {
             if (this.innerHTML !== email) {
                 $("select[name=userlist]").append("<option value='" + this.innerHTML + "'>" + this.innerHTML + "</option>");
@@ -630,17 +639,16 @@ $(document).ready(function () {
 
     // Unread mess
     function unreadMess() {
-        callAjax("/ChatApp/app/history/unread", "GET", null, "application/xml", function(data){
+        callAjax("/ChatApp/app/history/unread", "GET", null, "application/xml", function (data) {
             var unreads = data.split("|");
-            for (var idx in unreads){
+            for (var idx in unreads) {
                 if (unreads[idx] !== "") {
                     //console.log(unreads[idx]);
                     var info = unreads[idx].split(":");
                     //console.log(info);
                     if (info[0].startsWith("@")) {
                         $("a.user[href='#" + info[0].substr(1) + "'] > span.badge").html(info[1]);
-                    }
-                    else {
+                    } else {
                         $("a.group[href='#" + info[0] + "'] > span.badge").html(info[1]);
                     }
                 }
