@@ -37,7 +37,9 @@ $(document).ready(function () {
 
     // Log out
     $('#log-out').click(function () {
-        localStorage.clear();
+        callAjax('/ChatApp/app/logout/', "GET", null, "application/xml", function () { 
+            localStorage.clear();
+        });
         window.location = location.origin + '/ChatApp/';
     });
 
