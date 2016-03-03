@@ -37,10 +37,10 @@ $(document).ready(function () {
 
     // Log out
     $('#log-out').click(function () {
-        callAjax('/ChatApp/app/logout/', "GET", null, "application/xml", function () { 
+        callAjax('/ChatApp/app/auth/logout/', "GET", null, "application/xml", function () { 
             localStorage.clear();
+            window.location = location.origin + '/ChatApp/';
         });
-        window.location = location.origin + '/ChatApp/';
     });
 
     $("#openAlert").click(function (e) {
