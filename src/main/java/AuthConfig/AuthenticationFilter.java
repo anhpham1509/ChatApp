@@ -138,6 +138,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         //String userRole = userMgr.getUserRole(username);
         List<User> users = History.getInstance().getUsers();
         for (int i = 0; i < users.size(); i++) {
+            if(users.get(i).getToken()==null){
+                continue;
+            }
             if (users.get(i).getToken().equals(token) && rolesSet.contains(users.get(i).getRole())) {
                 isAllowed = true;
                 request.setAttribute("useridx", i);
