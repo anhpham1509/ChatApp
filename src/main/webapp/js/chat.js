@@ -576,7 +576,7 @@ $(document).ready(function () {
                     var info = unreads[idx].split(":");
                     //console.log(info);
                     if (info[0].startsWith("@")) {
-                        $("a.user[href='#" + info[0] + "'] > span.badge").html(info[1]);
+                        $("a.user[href='#" + info[0].substr(1) + "'] > span.badge").html(info[1]);
                     }
                     else {
                         $("a.group[href='#" + info[0] + "'] > span.badge").html(info[1]);
