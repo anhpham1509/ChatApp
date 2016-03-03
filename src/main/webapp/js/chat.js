@@ -46,10 +46,25 @@ $(document).ready(function () {
             alert("Only admins could send alerts !");
         }
     });
-    
-    $("#sendAlert").click(function(){
-        var xml = "<alert><time>null</time><origin>" + "<email>" + email + "</email>" + "</origin>" + "<targetList>" + $("select[name=userlist]").val() + "</targetList><message>" + $("#alertMessage").val() + "</message></alert>";
-        console.log(xml);
+
+    $("#sendAlert").click(function () {
+        console.log($("#alertList").val());
+        var list = "";
+        var message = $("#alertMessage").val();
+        $("#alertList").val().forEach(function (user) {
+            console.log(user);
+            list = list + user + ",";
+        });
+
+        if (!list || !message) {
+            alert("Please fill in required inputs!");
+            return;
+        }
+        // remove last comma
+        list = list.substring(0, list.length - 1);
+        var xml = "<alert><time>null</time><origin>" + "<email>" + email + "</email>" + "</origin>" + "<targetList>" + list + "</targetList><message>" + message + "</message></alert>";
+
+        // send request
         $.ajax({
             url: '/ChatApp/app/alert',
             method: "POST",
@@ -59,7 +74,8 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Authorization", token);
             },
             success: function (result) {
-                console.log(result);
+                alert("Successfully sent alerts!");
+                $('#alert-modal').modal('toggle');
             },
             error: function (err) {
                 console.log(err);
@@ -68,8 +84,13 @@ $(document).ready(function () {
     });
 
     $("#promoteUser").click(function () {
-        callAjax("/ChatApp/app/user/promote/", "POST", "<user>" + "<email>" + $("select[name=userlist]").val() + "</email>" + "</user>", "application/xml", function () {
-            alert("Successfully promoted!")
+        if (!isAdmin) {
+            alert("Only admins are able to promote!");
+            return;
+        }
+        callAjax("/ChatApp/app/user/promote/", "POST", "<user>" + "<email>" + $("select[id=promoteList]").val() + "</email>" + "</user>", "application/xml", function () {
+            alert("Successfully promoted!");
+            $('#user-mgmt-modal').modal('toggle');
         });
     });
 
@@ -180,7 +201,7 @@ $(document).ready(function () {
         $('#join-modal').click(function () {
             listAllGroups();
         });
-        
+
         unreadMess();
     }
 
@@ -317,6 +338,11 @@ $(document).ready(function () {
 
 // Pooling new message
     function updateNewMess(data) {
+        if ($(data).find("alert").length > 0) {
+            displayAlert(data);
+            return;
+        }
+
         $(data).find("historyEntry").each(function (n) {
             var message = $(this).find("messsage").text();
             var from = $(this).find("email").text();
@@ -622,52 +648,6 @@ $(document).ready(function () {
     }
 
 
-// Get Token
-    function getToken() {
-        var path = window.location.search;
-
-        if (path.indexOf("token") !== -1) {
-            var token = window.location.search.split("token=")[1];
-            //globalToken = token;
-            localStorage.setItem("token", token);
-            location.replace(window.location.origin + "/ChatApp/");
-            console.log(localStorage.getItem("token"));
-        } else {
-            token = localStorage.getItem("token");
-        }
-    }
-
-// Sending images
-    function sendImage() {
-        event.preventDefault();
-        if (!target) {
-            return;
-        }
-        var imgURL = "/ChatApp/app/chat/image/" + target;
-        var file = $('#send-image').get(0).files[0];
-        var formData = new FormData();
-        formData.append('file', file);
-        $.ajax({
-            type: 'POST',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", token);
-            },
-            url: imgURL,
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                //console.log("success");
-                //console.log(data);
-            },
-            error: function (data) {
-                //console.log("error");
-                //console.log(data);
-            }
-        });
-    }
-
 // Get alerts when logging in
     function getAlerts() {
         callAjax("/ChatApp/app/alert", "GET", null, "application/xml", displayAlert);
@@ -714,3 +694,49 @@ $(document).ready(function () {
 });
 
 
+
+// Get Token
+function getToken() {
+    var path = window.location.search;
+
+    if (path.indexOf("token") !== -1) {
+        var token = window.location.search.split("token=")[1];
+        //globalToken = token;
+        localStorage.setItem("token", token);
+        location.replace(window.location.origin + "/ChatApp/");
+        console.log(localStorage.getItem("token"));
+    } else {
+        token = localStorage.getItem("token");
+    }
+}
+
+// Sending images
+function sendImage() {
+    event.preventDefault();
+    if (!target) {
+        return;
+    }
+    var imgURL = "/ChatApp/app/chat/image/" + target;
+    var file = $('#send-image').get(0).files[0];
+    var formData = new FormData();
+    formData.append('file', file);
+    $.ajax({
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", token);
+        },
+        url: imgURL,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+            //console.log("success");
+            //console.log(data);
+        },
+        error: function (data) {
+            //console.log("error");
+            //console.log(data);
+        }
+    });
+}

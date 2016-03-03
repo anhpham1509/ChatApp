@@ -317,9 +317,9 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h3 id="modal-title" class="modal-title">User management</h3>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body modal-select">
                         <i class="form-info">Select a user to promote to admin:</i>
-                        <select name="userlist"></select>
+                        <select id="promoteList" name="userlist"></select>
                     </div>
                     <div id="modal-footer" class="modal-footer">
                         <button id="promoteUser" class="btn btn-success">Promote user</button>
@@ -338,9 +338,9 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h3 id="modal-title" class="modal-title">Alert</h3>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body modal-select">
                         <i class="form-info">Select multiple users to send alerts:</i>
-                        <select name="userlist" style="float:left; width:50%;" multiple="multiple"></select>
+                        <select id="alertList" name="userlist" style="float:left; width:50%;" multiple="multiple"></select>
                         <i class="form-info">Enter alert message:</i>
                         <input style="display:block" type="text" size="50" id="alertMessage"/>
                     </div>

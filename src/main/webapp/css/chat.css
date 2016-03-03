@@ -271,6 +271,10 @@ ul.alert-dropdown {
     overflow-y: scroll;
 }
 
+.modal-select {
+    overflow-y: initial;
+}
+
 .fileUpload {
     position: relative;
     overflow: hidden;
