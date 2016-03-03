@@ -3,6 +3,7 @@ var email = localStorage.getItem('email');
 var target = "";
 var joinedGroups = [];
 var isAdmin;
+var userList=[];
 
 
 
@@ -165,6 +166,7 @@ $(document).ready(function () {
         });
         $(data).find("email").each(function () {
             if (this.innerHTML !== email) {
+                userList.push(this.innerHTML);
                 $("select[name=userlist]").append("<option value='" + this.innerHTML + "'>" + this.innerHTML + "</option>");
                 $("ul#users").append("<li><a href='#" + this.innerHTML + "' class='user'>" + this.innerHTML + " <span class='badge'></span></a></li>");
             }
@@ -588,13 +590,18 @@ $(document).ready(function () {
                 \
                 <div class='form-group'>\
                     <label for='invite-people'>Invite others to join (optional)</label>\
-                    <input id='invite-people' class='form-control' type='text' placeholder='Enter username here to invite'>\
+                    <select id='invite-people' name='invite-people' multiple='multiple'></select>\
                 </div>\
             </form>\
             ");
+            
             $('#modal-footer').html("<button id='create-group' type='submit' class='btn btn-danger'>Create group</button>");
-
+            
             var isPrivate = false;
+            userList.forEach(function(user){
+               $("#invite-people").append("<option value='" + user + "'>" + user + "</option>");
+            });
+            $("#invite-people").multiselect({maxHeight: 200});
 
             $('#myonoffswitch').click(function () {
                 isPrivate = !isPrivate;
@@ -602,32 +609,67 @@ $(document).ready(function () {
 
             $('#create-group').click(function () {
                 var newGroup = $('#group-name').val();
-                if (isPrivate) {
-                    createPrivateGroup(newGroup);
-                } else {
-                    createPublicGroup(newGroup);
+                
+                var inviteUsers=$("select[name=invite-people]").val();
+                var invite_users_xml="";
+            if(inviteUsers){
+                 inviteUsers.forEach(function(user){
+                 invite_users_xml+="<user><email>"+user+"</email></user>"    
+            });
+                }else{
+                    invite_users_xml=null;
                 }
-                listJoinedGroups();
-                listAllGroups();
+                if (isPrivate) {
+                    createPrivateGroup(newGroup,invite_users_xml);
+                } else {
+                    createPublicGroup(newGroup,invite_users_xml);
+                }
+
                 event.preventDefault();
             });
         });
     }
 
 // Create new public group
-    function createPublicGroup(group) {
+    function createPublicGroup(group,inviteUsers) {
         callAjax("/ChatApp/app/group/createPublic/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
                 function () {
-                    joinGroup(group);
+                    if(inviteUsers){
+                       callAjax("/ChatApp/app/group/addUser/"+group, "POST", "<users>" + inviteUsers + "</users>", "application/xml",
+                            function () {
+                                listJoinedGroups();
+                                listAllGroups();
+                            }); 
+                    }else{
+                        listJoinedGroups();
+                        listAllGroups();
+                    }
+                        
                 });
     }
 
 // Create new private group
-    function createPrivateGroup(group) {
+    function createPrivateGroup(group,inviteUsers) {
+        
         callAjax("/ChatApp/app/group/createPrivate/", "POST", "<group><name>" + group + "</name></group>", "application/xml",
                 function () {
                     // Select people to join this group
                     //joinGroup(group);
+                    if(inviteUsers){
+                        callAjax("/ChatApp/app/group/addUser/"+group, "POST", "<users>" + inviteUsers + "</users>", "application/xml",
+                        function () {
+                            // Select people to join this group
+                            //joinGroup(group);
+                            listJoinedGroups();
+                            listAllGroups();
+                        });
+                    }
+                    
+                    else{
+                        listJoinedGroups();
+                        listAllGroups();
+                    }
+                        
                 });
     }
 
